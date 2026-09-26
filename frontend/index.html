@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAVIS Intelligence Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.26.0/cytoscape.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #f8fafc; display: flex; height: 100vh; width: 100vw; overflow: hidden; }
+        #sidebar { width: 380px; min-width: 380px; height: 100vh; padding: 24px; background: #1e293b; border-right: 1px solid #334155; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; z-index: 10; }
+        #cy { flex-grow: 1; height: 100vh; background: #020617; position: relative; }
+        h2 { font-size: 1.4rem; font-weight: 700; color: #f8fafc; letter-spacing: -0.02em; }
+        .badge { background: #ef4444; color: #ffffff; padding: 8px 12px; border-radius: 6px; display: none; font-weight: 600; font-size: 0.85rem; text-align: center; border: 1px solid #f87171; }
+        .confidence-box { font-size: 0.95rem; color: #94a3b8; }
+        .confidence-box strong { color: #38bdf8; font-size: 1.1rem; }
+        .control-group { background: #0f172a; padding: 14px; border-radius: 8px; border: 1px solid #334155; }
+        .control-group label { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; color: #94a3b8; margin-bottom: 8px; }
+        .control-group label span { color: #38bdf8; }
+        .control-group input[type=range] { width: 100%; accent-color: #3b82f6; cursor: pointer; }
+        .chart-container { background: #0f172a; padding: 12px; border-radius: 8px; border: 1px solid #334155; height: 230px; position: relative; }
+        .contradiction { color: #fbbf24; font-size: 0.85rem; line-height: 1.4; border: 1px solid #f59e0b33; background: #f59e0b10; padding: 12px; border-radius: 6px; }
+        button { background: #2563eb; color: #ffffff; border: none; padding: 12px; width: 100%; cursor: pointer; border-radius: 6px; font-weight: 600; font-size: 0.9rem; transition: background 0.2s; margin-top: auto; }
+        button:hover { background: #1d4ed8; }
+    </style>
+</head>
+<body>
+    <div id="sidebar">
+        <h2>DAVIS Intelligence</h2>
+        <div id="aiBadge" class="badge">⚠️ AI Evasion Detected</div>
+        <div class="confidence-box">Overall Confidence: <strong id="confidenceScore">--</strong></div>
+        <div class="control-group">
+            <label>PGP Weight: <span id="pgpVal">34%</span></label>
+            <input type="range" id="pgpSlider" min="0" max="100" value="34" oninput="updateAllWeights()">
+            <label style="margin-top: 10px;">Bridge Sync Weight: <span id="bridgeVal">22%</span></label>
+            <input type="range" id="bridgeSlider" min="0" max="100" value="22" oninput="updateAllWeights()">
+            <label style="margin-top: 10px;">Stylometry Weight: <span id="styVal">15%</span></label>
+            <input type="range" id="stySlider" min="0" max="100" value="15" oninput="updateAllWeights()">
+        </div>
+        <div class="chart-container">
+            <canvas id="shapCanvas"></canvas>
+        </div>
+        <div id="alertPanel" class="contradiction" style="display: none;"></div>
+        <button onclick="downloadPdf()">Generate Sec 63 BSA Certificate</button>
+    </div>
+    <div id="cy"></div>
+    <script src="app.js"></script>
+</body>
+</html>
