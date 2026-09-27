@@ -1,0 +1,277 @@
+{
+  "meta": {
+    "datasetName": "DAVIS Synthetic Intelligence Dataset",
+    "disclaimer": "This dataset is entirely SYNTHETIC. All usernames, emails, PGP keys, wallet addresses, domains, onion services, IP addresses and writing samples are fabricated for prototype demonstration purposes only. No real individuals, organizations, or infrastructure are represented. Do not use this data to draw conclusions about any real person.",
+    "version": "1.0"
+  },
+  "records": [
+    {
+      "recordId": "REC-001",
+      "marketplace": "DarkBazaar",
+      "username": "r4v3n_mh",
+      "relatedHandles": [],
+      "email": "r4v3n.contact@protonmail.com",
+      "pgpKey": "0xA1B2C3D4",
+      "wallet": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNb",
+      "domain": "",
+      "onionService": "darkbazaarxyz7f3q2p1s9k4m6h8j.onion",
+      "infrastructure": {
+        "serverStatusExposed": true,
+        "sslCertFingerprint": "AA:11:BB:22:CC:33:DD:44",
+        "serviceBanner": "nginx/1.18.0 (Ubuntu) default page",
+        "clearnetIP": "203.0.113.45"
+      },
+      "writingSample": "yo... got fresh access, moving fast. dm me quick, not sticking around long. payment first, no exceptions. limited stock, act now.",
+      "notes": "The account r4v3n_mh used PGP key 0xA1B2C3D4 and can be reached at r4v3n.contact@protonmail.com on DarkBazaar.",
+      "behaviour": {
+        "postingFrequencyPerWeek": 15,
+        "avgResponseTimeHours": 2,
+        "activeHoursUTC": [
+          1,
+          2,
+          3,
+          4,
+          14
+        ]
+      },
+      "activityTimestamps": [
+        "2025-01-06T01:00:00Z",
+        "2025-01-06T02:00:00Z",
+        "2025-01-06T03:00:00Z",
+        "2025-01-06T14:00:00Z",
+        "2025-01-08T01:00:00Z",
+        "2025-01-08T02:00:00Z",
+        "2025-01-08T03:00:00Z",
+        "2025-01-08T14:00:00Z",
+        "2025-01-10T01:00:00Z",
+        "2025-01-10T02:00:00Z",
+        "2025-01-10T03:00:00Z",
+        "2025-01-10T14:00:00Z",
+        "2025-01-13T01:00:00Z",
+        "2025-01-13T02:00:00Z",
+        "2025-01-13T03:00:00Z",
+        "2025-01-13T14:00:00Z"
+      ]
+    },
+    {
+      "recordId": "REC-002",
+      "marketplace": "ShadowMart",
+      "username": "raven_mh",
+      "relatedHandles": [
+        "r4v3n_mh"
+      ],
+      "email": "",
+      "pgpKey": "0xA1B2C3D4",
+      "wallet": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNb",
+      "domain": "",
+      "onionService": "shadowmart2k9d7f1a3b6c8e.onion",
+      "infrastructure": {
+        "serverStatusExposed": true,
+        "sslCertFingerprint": "AA:11:BB:22:CC:33:DD:44",
+        "serviceBanner": "nginx/1.18.0 (Ubuntu) default page",
+        "clearnetIP": "203.0.113.201"
+      },
+      "writingSample": "hey... same fresh access as before, moving quick again. hit me up fast, won't be around for long. payment upfront, no exceptions.",
+      "notes": "raven_mh is listed on ShadowMart as a related handle of r4v3n_mh, reusing PGP key 0xA1B2C3D4 and the same wallet address.",
+      "behaviour": {
+        "postingFrequencyPerWeek": 13,
+        "avgResponseTimeHours": 3,
+        "activeHoursUTC": [
+          2,
+          3,
+          4,
+          15
+        ]
+      },
+      "activityTimestamps": [
+        "2025-01-07T02:00:00Z",
+        "2025-01-07T03:00:00Z",
+        "2025-01-07T04:00:00Z",
+        "2025-01-07T15:00:00Z",
+        "2025-01-09T02:00:00Z",
+        "2025-01-09T03:00:00Z",
+        "2025-01-09T04:00:00Z",
+        "2025-01-09T15:00:00Z",
+        "2025-01-11T02:00:00Z",
+        "2025-01-11T03:00:00Z",
+        "2025-01-11T04:00:00Z",
+        "2025-01-11T15:00:00Z",
+        "2025-01-14T02:00:00Z",
+        "2025-01-14T03:00:00Z",
+        "2025-01-14T04:00:00Z",
+        "2025-01-14T15:00:00Z"
+      ]
+    },
+    {
+      "recordId": "REC-006",
+      "marketplace": "DarkBazaar",
+      "username": "r4v3n_backup",
+      "relatedHandles": [
+        "r4v3n_mh"
+      ],
+      "email": "r4v3n.backup@protonmail.com",
+      "pgpKey": "0xA1B2C3D4",
+      "wallet": "1CounterpartyXXXXXXXXXXXXXUWLpVr",
+      "domain": "",
+      "onionService": "",
+      "infrastructure": {
+        "serverStatusExposed": true,
+        "sslCertFingerprint": "AA:11:BB:22:CC:33:DD:44",
+        "serviceBanner": "nginx/1.18.0 (Ubuntu) default page",
+        "clearnetIP": "203.0.113.45"
+      },
+      "writingSample": "backup account, same deal as always. fresh access, moving fast, dm quick before it's gone. payment first, always.",
+      "notes": "r4v3n_backup declared as a backup/related handle for r4v3n_mh, reusing PGP key 0xA1B2C3D4 and the same infrastructure fingerprint.",
+      "behaviour": {
+        "postingFrequencyPerWeek": 14,
+        "avgResponseTimeHours": 2,
+        "activeHoursUTC": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "activityTimestamps": [
+        "2025-01-06T01:00:00Z",
+        "2025-01-06T02:00:00Z",
+        "2025-01-06T03:00:00Z",
+        "2025-01-09T01:00:00Z",
+        "2025-01-09T02:00:00Z",
+        "2025-01-09T03:00:00Z",
+        "2025-01-12T01:00:00Z",
+        "2025-01-12T02:00:00Z",
+        "2025-01-12T03:00:00Z",
+        "2025-01-15T01:00:00Z",
+        "2025-01-15T02:00:00Z",
+        "2025-01-15T03:00:00Z"
+      ]
+    },
+    {
+      "recordId": "REC-003",
+      "marketplace": "DarkBazaar",
+      "username": "ghost_seller",
+      "relatedHandles": [],
+      "email": "ghost.ops@securemail.example",
+      "pgpKey": "0xF7E8D9C0",
+      "wallet": "3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy",
+      "domain": "",
+      "onionService": "ghostops5h2j9k1m3n7p4q.onion",
+      "infrastructure": {
+        "serverStatusExposed": false,
+        "sslCertFingerprint": "11:22:33:44:55:66:77:88",
+        "serviceBanner": "Apache/2.4.41 (Ubuntu) Server at ghostops",
+        "clearnetIP": "198.51.100.12"
+      },
+      "writingSample": "Good afternoon. We are pleased to offer a curated selection of verified products this week. Please review the catalogue and reach out with any formal enquiries at your convenience.",
+      "notes": "ghost_seller operates on DarkBazaar under PGP key 0xF7E8D9C0.",
+      "behaviour": {
+        "postingFrequencyPerWeek": 4,
+        "avgResponseTimeHours": 10,
+        "activeHoursUTC": [
+          9,
+          10,
+          11
+        ]
+      },
+      "activityTimestamps": [
+        "2025-01-06T09:00:00Z",
+        "2025-01-06T10:00:00Z",
+        "2025-01-06T11:00:00Z",
+        "2025-01-10T09:00:00Z",
+        "2025-01-10T10:00:00Z",
+        "2025-01-10T11:00:00Z",
+        "2025-01-14T09:00:00Z",
+        "2025-01-14T10:00:00Z",
+        "2025-01-14T11:00:00Z",
+        "2025-01-18T09:00:00Z",
+        "2025-01-18T10:00:00Z",
+        "2025-01-18T11:00:00Z"
+      ]
+    },
+    {
+      "recordId": "REC-005",
+      "marketplace": "ShadowMart",
+      "username": "phantom_x",
+      "relatedHandles": [],
+      "email": "phantom.contact@securemail.example",
+      "pgpKey": "0x55AA66BB",
+      "wallet": "3FZbgi29cpjq2GjdwV8eyHuJJnkLtktZc5",
+      "domain": "",
+      "onionService": "phantomxmarket9d3f7a1b.onion",
+      "infrastructure": {
+        "serverStatusExposed": false,
+        "sslCertFingerprint": "11:22:33:44:55:66:77:88",
+        "serviceBanner": "Apache/2.4.41 (Ubuntu) Server at ghostops",
+        "clearnetIP": "198.51.100.230"
+      },
+      "writingSample": "Good day. We maintain a curated inventory of verified goods, updated weekly. Kindly submit formal enquiries through the usual encrypted channel, and allow time for a considered reply.",
+      "notes": "phantom_x on ShadowMart shares an infrastructure fingerprint with ghost_seller on DarkBazaar.",
+      "behaviour": {
+        "postingFrequencyPerWeek": 5,
+        "avgResponseTimeHours": 9,
+        "activeHoursUTC": [
+          10,
+          11,
+          12
+        ]
+      },
+      "activityTimestamps": [
+        "2025-01-07T10:00:00Z",
+        "2025-01-07T11:00:00Z",
+        "2025-01-07T12:00:00Z",
+        "2025-01-11T10:00:00Z",
+        "2025-01-11T11:00:00Z",
+        "2025-01-11T12:00:00Z",
+        "2025-01-15T10:00:00Z",
+        "2025-01-15T11:00:00Z",
+        "2025-01-15T12:00:00Z",
+        "2025-01-19T10:00:00Z",
+        "2025-01-19T11:00:00Z",
+        "2025-01-19T12:00:00Z"
+      ]
+    },
+    {
+      "recordId": "REC-004",
+      "marketplace": "NightExchange",
+      "username": "nyt_trader",
+      "relatedHandles": [],
+      "email": "nyt.trader@mailbox.example",
+      "pgpKey": "0x9922CCEE",
+      "wallet": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNb",
+      "domain": "nightexchange-support.example.com",
+      "onionService": "nightexch4a8c2f9d1e.onion",
+      "infrastructure": {
+        "serverStatusExposed": true,
+        "sslCertFingerprint": "99:88:77:66:55:44:33:22",
+        "serviceBanner": "lighttpd/1.4.55",
+        "clearnetIP": "192.0.2.77"
+      },
+      "writingSample": "Standard listing renewed. Escrow terms unchanged from last cycle. Contact via encrypted channel for bulk pricing and shipping terms.",
+      "notes": "nyt_trader on NightExchange reuses a wallet address, 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNb, also seen on DarkBazaar.",
+      "behaviour": {
+        "postingFrequencyPerWeek": 8,
+        "avgResponseTimeHours": 6,
+        "activeHoursUTC": [
+          6,
+          7,
+          20
+        ]
+      },
+      "activityTimestamps": [
+        "2025-01-06T06:00:00Z",
+        "2025-01-06T07:00:00Z",
+        "2025-01-06T20:00:00Z",
+        "2025-01-08T06:00:00Z",
+        "2025-01-08T07:00:00Z",
+        "2025-01-08T20:00:00Z",
+        "2025-01-11T06:00:00Z",
+        "2025-01-11T07:00:00Z",
+        "2025-01-11T20:00:00Z",
+        "2025-01-16T06:00:00Z",
+        "2025-01-16T07:00:00Z",
+        "2025-01-16T20:00:00Z"
+      ]
+    }
+  ]
+}
