@@ -1,0 +1,390 @@
+{
+  "dataset": "DAVIS_CONTROLLED_INTELLIGENCE_V1",
+  "description": "Controlled synthetic intelligence dataset used by the DAVIS prototype for reproducible threat-actor attribution analysis.",
+  "records": [
+    {
+      "recordId": "S-01",
+      "indicatorType": "USERNAME",
+      "indicatorValue": "r4v3n_mh",
+      "sourceEntity": {
+        "entityType": "USERNAME",
+        "entityValue": "r4v3n_mh",
+        "description": "Known username supplied as the initial investigation indicator.",
+        "discoveryConfidence": 1.0
+      },
+      "targetEntity": {
+        "entityType": "EMAIL",
+        "entityValue": "raven.mh@example.test",
+        "description": "Synthetic email address associated with the investigated account.",
+        "discoveryConfidence": 0.92
+      },
+      "relationship": {
+        "relationshipType": "USES_EMAIL",
+        "assessment": "OBSERVED",
+        "description": "The investigated username is associated with the observed synthetic email address."
+      },
+      "evidence": {
+        "evidenceType": "EMAIL_MATCH",
+        "source": "Synthetic Intelligence Record S-01",
+        "description": "The same synthetic email address was observed in account records associated with the investigated handle.",
+        "strength": "HIGH",
+        "reliability": "HIGH",
+        "direction": "SUPPORTS",
+        "independenceGroup": "IDENTITY_CONTACT",
+        "observedAt": "2026-09-18T11:30:00"
+      }
+    },
+    {
+      "recordId": "S-02",
+      "indicatorType": "USERNAME",
+      "indicatorValue": "r4v3n_mh",
+      "sourceEntity": {
+        "entityType": "USERNAME",
+        "entityValue": "r4v3n_mh",
+        "description": "Known username supplied as the initial investigation indicator.",
+        "discoveryConfidence": 1.0
+      },
+      "targetEntity": {
+        "entityType": "PGP_KEY",
+        "entityValue": "0xA1B2C3D4E5F6",
+        "description": "Synthetic PGP key fingerprint observed in controlled intelligence.",
+        "discoveryConfidence": 0.95
+      },
+      "relationship": {
+        "relationshipType": "USES_PGP_KEY",
+        "assessment": "OBSERVED",
+        "description": "The investigated username is associated with the observed synthetic PGP key."
+      },
+      "evidence": {
+        "evidenceType": "PGP_KEY_MATCH",
+        "source": "Synthetic Intelligence Record S-02",
+        "description": "The same synthetic PGP key fingerprint was observed with the investigated account.",
+        "strength": "HIGH",
+        "reliability": "HIGH",
+        "direction": "SUPPORTS",
+        "independenceGroup": "CRYPTOGRAPHIC",
+        "observedAt": "2026-09-18T12:10:00"
+      }
+    },
+    {
+      "recordId": "S-03",
+      "indicatorType": "USERNAME",
+      "indicatorValue": "r4v3n_mh",
+      "sourceEntity": {
+        "entityType": "USERNAME",
+        "entityValue": "r4v3n_mh",
+        "description": "Known username supplied as the initial investigation indicator.",
+        "discoveryConfidence": 1.0
+      },
+      "targetEntity": {
+        "entityType": "WALLET",
+        "entityValue": "bc1qraven2026syntheticwallet",
+        "description": "Synthetic wallet identifier associated with observed activity.",
+        "discoveryConfidence": 0.88
+      },
+      "relationship": {
+        "relationshipType": "LINKED_WALLET",
+        "assessment": "INFERRED",
+        "description": "Controlled intelligence links the investigated username to the observed synthetic wallet."
+      },
+      "evidence": {
+        "evidenceType": "WALLET_MATCH",
+        "source": "Synthetic Intelligence Record S-03",
+        "description": "The synthetic wallet was repeatedly associated with the investigated username in the controlled dataset.",
+        "strength": "HIGH",
+        "reliability": "HIGH",
+        "direction": "SUPPORTS",
+        "independenceGroup": "FINANCIAL",
+        "observedAt": "2026-09-18T13:00:00"
+      }
+    },
+    {
+      "recordId": "S-04",
+      "indicatorType": "USERNAME",
+      "indicatorValue": "r4v3n_mh",
+      "sourceEntity": {
+        "entityType": "USERNAME",
+        "entityValue": "r4v3n_mh",
+        "description": "Known username supplied as the initial investigation indicator.",
+        "discoveryConfidence": 1.0
+      },
+      "targetEntity": {
+        "entityType": "MARKETPLACE",
+        "entityValue": "DarkBazaar",
+        "description": "Synthetic marketplace used in the controlled investigation dataset.",
+        "discoveryConfidence": 0.90
+      },
+      "relationship": {
+        "relationshipType": "ACTIVE_ON",
+        "assessment": "OBSERVED",
+        "description": "The investigated username was observed active on the synthetic marketplace."
+      },
+      "evidence": {
+        "evidenceType": "MARKETPLACE_OVERLAP",
+        "source": "Synthetic Intelligence Record S-04",
+        "description": "The investigated username was observed active on DarkBazaar.",
+        "strength": "MEDIUM",
+        "reliability": "HIGH",
+        "direction": "SUPPORTS",
+        "independenceGroup": "MARKETPLACE_ACTIVITY",
+        "observedAt": "2026-09-18T14:00:00"
+      }
+    },
+    {
+      "recordId": "S-05",
+      "indicatorType": "USERNAME",
+      "indicatorValue": "r4v3n_mh",
+      "sourceEntity": {
+        "entityType": "USERNAME",
+        "entityValue": "r4v3n_mh",
+        "description": "Known username supplied as the initial investigation indicator.",
+        "discoveryConfidence": 1.0
+      },
+      "targetEntity": {
+        "entityType": "RELATED_HANDLE",
+        "entityValue": "raven_alt",
+        "description": "Related handle discovered in controlled marketplace intelligence.",
+        "discoveryConfidence": 0.85
+      },
+      "relationship": {
+        "relationshipType": "ALIAS_OF",
+        "assessment": "INFERRED",
+        "description": "Multiple controlled signals suggest that raven_alt may be related to r4v3n_mh."
+      },
+      "evidence": {
+        "evidenceType": "HANDLE_SIMILARITY",
+        "source": "Synthetic Intelligence Record S-05",
+        "description": "The related handle raven_alt shares a distinctive naming pattern with r4v3n_mh.",
+        "strength": "LOW",
+        "reliability": "MEDIUM",
+        "direction": "SUPPORTS",
+        "independenceGroup": "HANDLE",
+        "observedAt": "2026-09-18T14:30:00"
+      }
+    },
+    {
+      "recordId": "S-06",
+      "indicatorType": "USERNAME",
+      "indicatorValue": "r4v3n_mh",
+      "sourceEntity": {
+        "entityType": "ONION_SERVICE",
+        "entityValue": "r4v3nmarketexample.onion",
+        "description": "Synthetic onion-service identifier used for infrastructure correlation.",
+        "discoveryConfidence": 0.82
+      },
+      "targetEntity": {
+        "entityType": "DOMAIN",
+        "entityValue": "raven-services.example",
+        "description": "Synthetic clearnet domain used for infrastructure correlation.",
+        "discoveryConfidence": 0.81
+      },
+      "relationship": {
+        "relationshipType": "LINKED_TO_CLEARNET",
+        "assessment": "INFERRED",
+        "description": "Controlled infrastructure records associate the onion service with the synthetic clearnet domain."
+      },
+      "evidence": {
+        "evidenceType": "CLEARNET_INFRASTRUCTURE_MATCH",
+        "source": "Synthetic Intelligence Record S-06",
+        "description": "Controlled infrastructure records associate the onion service with the synthetic clearnet domain.",
+        "strength": "HIGH",
+        "reliability": "HIGH",
+        "direction": "SUPPORTS",
+        "independenceGroup": "INFRASTRUCTURE",
+        "observedAt": "2026-09-19T09:00:00"
+      }
+    },
+    {
+      "recordId": "S-07",
+      "indicatorType": "USERNAME",
+      "indicatorValue": "r4v3n_mh",
+      "sourceEntity": {
+        "entityType": "DOMAIN",
+        "entityValue": "raven-services.example",
+        "description": "Synthetic clearnet domain used for infrastructure correlation.",
+        "discoveryConfidence": 0.81
+      },
+      "targetEntity": {
+        "entityType": "SSL_CERTIFICATE",
+        "entityValue": "SHA256-SIMULATED-CERT-RAVEN-2026",
+        "description": "Synthetic SSL certificate fingerprint.",
+        "discoveryConfidence": 0.90
+      },
+      "relationship": {
+        "relationshipType": "CERTIFICATE_MATCH",
+        "assessment": "OBSERVED",
+        "description": "The synthetic clearnet domain is associated with the observed synthetic certificate."
+      },
+      "evidence": {
+        "evidenceType": "SSL_CERTIFICATE_MATCH",
+        "source": "Synthetic Intelligence Record S-07",
+        "description": "The same synthetic certificate fingerprint appears in the controlled infrastructure records.",
+        "strength": "HIGH",
+        "reliability": "HIGH",
+        "direction": "SUPPORTS",
+        "independenceGroup": "INFRASTRUCTURE",
+        "observedAt": "2026-09-19T09:15:00"
+      }
+    },
+    {
+      "recordId": "S-08",
+      "indicatorType": "USERNAME",
+      "indicatorValue": "r4v3n_mh",
+      "sourceEntity": {
+        "entityType": "RELATED_HANDLE",
+        "entityValue": "raven_alt",
+        "description": "Related handle discovered in controlled marketplace intelligence.",
+        "discoveryConfidence": 0.85
+      },
+      "targetEntity": {
+        "entityType": "WRITING_SIGNATURE",
+        "entityValue": "RAVEN_STYLE_SIGNATURE_V1",
+        "description": "Synthetic writing-style representation used for similarity analysis.",
+        "discoveryConfidence": 0.78
+      },
+      "relationship": {
+        "relationshipType": "SIMILAR_WRITING",
+        "assessment": "INFERRED",
+        "description": "Controlled text samples from the related handle show similarity to the known persona writing profile."
+      },
+      "evidence": {
+        "evidenceType": "STYLOMETRIC_SIMILARITY",
+        "source": "Synthetic Intelligence Record S-08",
+        "description": "Controlled text samples show stylistic similarity between the known and related personas.",
+        "strength": "MEDIUM",
+        "reliability": "MEDIUM",
+        "direction": "SUPPORTS",
+        "independenceGroup": "BEHAVIORAL",
+        "observedAt": "2026-09-19T10:00:00"
+      }
+    },
+    {
+      "recordId": "S-09",
+      "indicatorType": "USERNAME",
+      "indicatorValue": "r4v3n_mh",
+      "sourceEntity": {
+        "entityType": "RELATED_HANDLE",
+        "entityValue": "raven_alt",
+        "description": "Related handle discovered in controlled marketplace intelligence.",
+        "discoveryConfidence": 0.85
+      },
+      "targetEntity": {
+        "entityType": "BEHAVIOR_PATTERN",
+        "entityValue": "NIGHT_ACTIVITY_01_00_03_30",
+        "description": "Synthetic activity pattern showing repeated activity in the same time window.",
+        "discoveryConfidence": 0.76
+      },
+      "relationship": {
+        "relationshipType": "SIMILAR_BEHAVIOR",
+        "assessment": "INFERRED",
+        "description": "The related handle shows a similar synthetic activity-time pattern."
+      },
+      "evidence": {
+        "evidenceType": "BEHAVIOURAL_SIMILARITY",
+        "source": "Synthetic Intelligence Record S-09",
+        "description": "The two controlled accounts show a similar activity window during repeated observations.",
+        "strength": "MEDIUM",
+        "reliability": "MEDIUM",
+        "direction": "SUPPORTS",
+        "independenceGroup": "BEHAVIORAL",
+        "observedAt": "2026-09-19T10:30:00"
+      }
+    },
+    {
+      "recordId": "S-10",
+      "indicatorType": "USERNAME",
+      "indicatorValue": "r4v3n_mh",
+      "sourceEntity": {
+        "entityType": "WALLET",
+        "entityValue": "bc1qraven2026syntheticwallet",
+        "description": "Synthetic wallet identifier associated with observed activity.",
+        "discoveryConfidence": 0.88
+      },
+      "targetEntity": {
+        "entityType": "MARKETPLACE",
+        "entityValue": "DarkBazaar",
+        "description": "Synthetic marketplace used in the controlled investigation dataset.",
+        "discoveryConfidence": 0.90
+      },
+      "relationship": {
+        "relationshipType": "TRANSACTED_WITH",
+        "assessment": "OBSERVED",
+        "description": "Controlled transaction records associate the wallet with marketplace activity."
+      },
+      "evidence": {
+        "evidenceType": "TRANSACTION_LINK",
+        "source": "Synthetic Intelligence Record S-10",
+        "description": "Synthetic transaction records associate the wallet with marketplace activity.",
+        "strength": "MEDIUM",
+        "reliability": "HIGH",
+        "direction": "SUPPORTS",
+        "independenceGroup": "FINANCIAL",
+        "observedAt": "2026-09-19T11:00:00"
+      }
+    },
+    {
+      "recordId": "S-11",
+      "indicatorType": "USERNAME",
+      "indicatorValue": "r4v3n_mh",
+      "sourceEntity": {
+        "entityType": "USERNAME",
+        "entityValue": "r4v3n_mh",
+        "description": "Known username supplied as the initial investigation indicator.",
+        "discoveryConfidence": 1.0
+      },
+      "targetEntity": {
+        "entityType": "RELATED_HANDLE",
+        "entityValue": "raven_alt",
+        "description": "Related handle discovered in controlled marketplace intelligence.",
+        "discoveryConfidence": 0.85
+      },
+      "relationship": {
+        "relationshipType": "ALIAS_OF",
+        "assessment": "INFERRED",
+        "description": "Multiple controlled signals suggest that raven_alt may be related to r4v3n_mh."
+      },
+      "evidence": {
+        "evidenceType": "CONTRADICTING_SIGNAL",
+        "source": "Synthetic Intelligence Record S-11",
+        "description": "One controlled observation shows a temporary activity-window mismatch for the related handle.",
+        "strength": "LOW",
+        "reliability": "MEDIUM",
+        "direction": "CONTRADICTS",
+        "independenceGroup": "BEHAVIORAL",
+        "observedAt": "2026-09-19T11:30:00"
+      }
+    },
+    {
+      "recordId": "S-12",
+      "indicatorType": "USERNAME",
+      "indicatorValue": "r4v3n_mh",
+      "sourceEntity": {
+        "entityType": "USERNAME",
+        "entityValue": "r4v3n_mh",
+        "description": "Known username supplied as the initial investigation indicator.",
+        "discoveryConfidence": 1.0
+      },
+      "targetEntity": {
+        "entityType": "RELATED_HANDLE",
+        "entityValue": "raven_alt",
+        "description": "Related handle discovered in controlled marketplace intelligence.",
+        "discoveryConfidence": 0.85
+      },
+      "relationship": {
+        "relationshipType": "ALIAS_OF",
+        "assessment": "INFERRED",
+        "description": "Multiple controlled signals suggest that raven_alt may be related to r4v3n_mh."
+      },
+      "evidence": {
+        "evidenceType": "SOURCE_CORROBORATION",
+        "source": "Synthetic Intelligence Record S-12",
+        "description": "A second controlled intelligence record references raven_alt in connection with the same marketplace cluster.",
+        "strength": "MEDIUM",
+        "reliability": "HIGH",
+        "direction": "SUPPORTS",
+        "independenceGroup": "MARKETPLACE_CORROBORATION",
+        "observedAt": "2026-09-19T12:00:00"
+      }
+    }
+  ]
+}

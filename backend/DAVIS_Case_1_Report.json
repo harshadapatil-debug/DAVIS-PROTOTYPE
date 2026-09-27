@@ -1,0 +1,661 @@
+{
+  "reportTitle" : "DAVIS Investigation Report",
+  "generatedAt" : "2026-09-27T13:59:22.6218088",
+  "case" : {
+    "caseId" : 1,
+    "caseName" : "Operation Monsoon",
+    "caseType" : "DARK_WEB_INTELLIGENCE",
+    "category" : "THREAT_ACTOR_ATTRIBUTION",
+    "createdAt" : "2026-09-20T10:00:00",
+    "description" : "Controlled synthetic investigation demonstrating cross-marketplace, infrastructure, wallet, PGP, email and persona correlation.",
+    "lastScanAt" : "2026-09-27T12:42:24",
+    "status" : "PROCESSED"
+  },
+  "knownIndicator" : {
+    "description" : "Known starting username supplied to DAVIS.",
+    "indicatorId" : 1,
+    "indicatorType" : "USERNAME",
+    "indicatorValue" : "r4v3n_mh"
+  },
+  "summary" : {
+    "entityCount" : 11,
+    "relationshipCount" : 11,
+    "evidenceCount" : 12,
+    "timelineEventCount" : 12
+  },
+  "entities" : [ {
+    "description" : "Known username supplied as the initial investigation indicator.",
+    "discoveryConfidence" : 1.0000,
+    "entityId" : 1,
+    "entityType" : "USERNAME",
+    "entityValue" : "r4v3n_mh"
+  }, {
+    "description" : "Related handle discovered in controlled marketplace intelligence.",
+    "discoveryConfidence" : 0.8500,
+    "entityId" : 2,
+    "entityType" : "RELATED_HANDLE",
+    "entityValue" : "raven_alt"
+  }, {
+    "description" : "Synthetic email address associated with the investigated account.",
+    "discoveryConfidence" : 0.9200,
+    "entityId" : 3,
+    "entityType" : "EMAIL",
+    "entityValue" : "raven.mh@example.test"
+  }, {
+    "description" : "Synthetic PGP key fingerprint observed in controlled intelligence.",
+    "discoveryConfidence" : 0.9500,
+    "entityId" : 4,
+    "entityType" : "PGP_KEY",
+    "entityValue" : "0xA1B2C3D4E5F6"
+  }, {
+    "description" : "Synthetic wallet identifier associated with observed activity.",
+    "discoveryConfidence" : 0.8800,
+    "entityId" : 5,
+    "entityType" : "WALLET",
+    "entityValue" : "bc1qraven2026syntheticwallet"
+  }, {
+    "description" : "Synthetic marketplace used in the controlled investigation dataset.",
+    "discoveryConfidence" : 0.9000,
+    "entityId" : 6,
+    "entityType" : "MARKETPLACE",
+    "entityValue" : "DarkBazaar"
+  }, {
+    "description" : "Synthetic onion-service identifier used for infrastructure correlation.",
+    "discoveryConfidence" : 0.8200,
+    "entityId" : 7,
+    "entityType" : "ONION_SERVICE",
+    "entityValue" : "r4v3nmarketexample.onion"
+  }, {
+    "description" : "Synthetic clearnet domain used for infrastructure correlation.",
+    "discoveryConfidence" : 0.8100,
+    "entityId" : 8,
+    "entityType" : "DOMAIN",
+    "entityValue" : "raven-services.example"
+  }, {
+    "description" : "Synthetic SSL certificate fingerprint.",
+    "discoveryConfidence" : 0.9000,
+    "entityId" : 9,
+    "entityType" : "SSL_CERTIFICATE",
+    "entityValue" : "SHA256-SIMULATED-CERT-RAVEN-2026"
+  }, {
+    "description" : "Synthetic activity pattern showing repeated activity in the same time window.",
+    "discoveryConfidence" : 0.7600,
+    "entityId" : 10,
+    "entityType" : "BEHAVIOR_PATTERN",
+    "entityValue" : "NIGHT_ACTIVITY_01_00_03_30"
+  }, {
+    "description" : "Synthetic writing-style representation used for similarity analysis.",
+    "discoveryConfidence" : 0.7800,
+    "entityId" : 11,
+    "entityType" : "WRITING_SIGNATURE",
+    "entityValue" : "RAVEN_STYLE_SIGNATURE_V1"
+  } ],
+  "relationships" : [ {
+    "assessment" : "OBSERVED",
+    "description" : "The investigated username is associated with the observed synthetic email address.",
+    "relationshipId" : 1,
+    "relationshipType" : "USES_EMAIL",
+    "sourceEntity" : {
+      "description" : "Known username supplied as the initial investigation indicator.",
+      "discoveryConfidence" : 1.0000,
+      "entityId" : 1,
+      "entityType" : "USERNAME",
+      "entityValue" : "r4v3n_mh"
+    },
+    "targetEntity" : {
+      "description" : "Synthetic email address associated with the investigated account.",
+      "discoveryConfidence" : 0.9200,
+      "entityId" : 3,
+      "entityType" : "EMAIL",
+      "entityValue" : "raven.mh@example.test"
+    }
+  }, {
+    "assessment" : "OBSERVED",
+    "description" : "The investigated username is associated with the observed synthetic PGP key.",
+    "relationshipId" : 2,
+    "relationshipType" : "USES_PGP_KEY",
+    "sourceEntity" : {
+      "description" : "Known username supplied as the initial investigation indicator.",
+      "discoveryConfidence" : 1.0000,
+      "entityId" : 1,
+      "entityType" : "USERNAME",
+      "entityValue" : "r4v3n_mh"
+    },
+    "targetEntity" : {
+      "description" : "Synthetic PGP key fingerprint observed in controlled intelligence.",
+      "discoveryConfidence" : 0.9500,
+      "entityId" : 4,
+      "entityType" : "PGP_KEY",
+      "entityValue" : "0xA1B2C3D4E5F6"
+    }
+  }, {
+    "assessment" : "INFERRED",
+    "description" : "Controlled intelligence links the investigated username to the observed synthetic wallet.",
+    "relationshipId" : 3,
+    "relationshipType" : "LINKED_WALLET",
+    "sourceEntity" : {
+      "description" : "Known username supplied as the initial investigation indicator.",
+      "discoveryConfidence" : 1.0000,
+      "entityId" : 1,
+      "entityType" : "USERNAME",
+      "entityValue" : "r4v3n_mh"
+    },
+    "targetEntity" : {
+      "description" : "Synthetic wallet identifier associated with observed activity.",
+      "discoveryConfidence" : 0.8800,
+      "entityId" : 5,
+      "entityType" : "WALLET",
+      "entityValue" : "bc1qraven2026syntheticwallet"
+    }
+  }, {
+    "assessment" : "OBSERVED",
+    "description" : "The investigated username was observed active on the synthetic marketplace.",
+    "relationshipId" : 4,
+    "relationshipType" : "ACTIVE_ON",
+    "sourceEntity" : {
+      "description" : "Known username supplied as the initial investigation indicator.",
+      "discoveryConfidence" : 1.0000,
+      "entityId" : 1,
+      "entityType" : "USERNAME",
+      "entityValue" : "r4v3n_mh"
+    },
+    "targetEntity" : {
+      "description" : "Synthetic marketplace used in the controlled investigation dataset.",
+      "discoveryConfidence" : 0.9000,
+      "entityId" : 6,
+      "entityType" : "MARKETPLACE",
+      "entityValue" : "DarkBazaar"
+    }
+  }, {
+    "assessment" : "OBSERVED",
+    "description" : "The related handle was observed on the same synthetic marketplace.",
+    "relationshipId" : 5,
+    "relationshipType" : "ACTIVE_ON",
+    "sourceEntity" : {
+      "description" : "Related handle discovered in controlled marketplace intelligence.",
+      "discoveryConfidence" : 0.8500,
+      "entityId" : 2,
+      "entityType" : "RELATED_HANDLE",
+      "entityValue" : "raven_alt"
+    },
+    "targetEntity" : {
+      "description" : "Synthetic marketplace used in the controlled investigation dataset.",
+      "discoveryConfidence" : 0.9000,
+      "entityId" : 6,
+      "entityType" : "MARKETPLACE",
+      "entityValue" : "DarkBazaar"
+    }
+  }, {
+    "assessment" : "INFERRED",
+    "description" : "Multiple controlled signals suggest that raven_alt may be related to r4v3n_mh.",
+    "relationshipId" : 6,
+    "relationshipType" : "ALIAS_OF",
+    "sourceEntity" : {
+      "description" : "Known username supplied as the initial investigation indicator.",
+      "discoveryConfidence" : 1.0000,
+      "entityId" : 1,
+      "entityType" : "USERNAME",
+      "entityValue" : "r4v3n_mh"
+    },
+    "targetEntity" : {
+      "description" : "Related handle discovered in controlled marketplace intelligence.",
+      "discoveryConfidence" : 0.8500,
+      "entityId" : 2,
+      "entityType" : "RELATED_HANDLE",
+      "entityValue" : "raven_alt"
+    }
+  }, {
+    "assessment" : "INFERRED",
+    "description" : "Controlled infrastructure records associate the onion service with the synthetic clearnet domain.",
+    "relationshipId" : 7,
+    "relationshipType" : "LINKED_TO_CLEARNET",
+    "sourceEntity" : {
+      "description" : "Synthetic onion-service identifier used for infrastructure correlation.",
+      "discoveryConfidence" : 0.8200,
+      "entityId" : 7,
+      "entityType" : "ONION_SERVICE",
+      "entityValue" : "r4v3nmarketexample.onion"
+    },
+    "targetEntity" : {
+      "description" : "Synthetic clearnet domain used for infrastructure correlation.",
+      "discoveryConfidence" : 0.8100,
+      "entityId" : 8,
+      "entityType" : "DOMAIN",
+      "entityValue" : "raven-services.example"
+    }
+  }, {
+    "assessment" : "OBSERVED",
+    "description" : "The synthetic clearnet domain is associated with the observed synthetic certificate.",
+    "relationshipId" : 8,
+    "relationshipType" : "CERTIFICATE_MATCH",
+    "sourceEntity" : {
+      "description" : "Synthetic clearnet domain used for infrastructure correlation.",
+      "discoveryConfidence" : 0.8100,
+      "entityId" : 8,
+      "entityType" : "DOMAIN",
+      "entityValue" : "raven-services.example"
+    },
+    "targetEntity" : {
+      "description" : "Synthetic SSL certificate fingerprint.",
+      "discoveryConfidence" : 0.9000,
+      "entityId" : 9,
+      "entityType" : "SSL_CERTIFICATE",
+      "entityValue" : "SHA256-SIMULATED-CERT-RAVEN-2026"
+    }
+  }, {
+    "assessment" : "INFERRED",
+    "description" : "Controlled text samples from the related handle show similarity to the known persona writing profile.",
+    "relationshipId" : 9,
+    "relationshipType" : "SIMILAR_WRITING",
+    "sourceEntity" : {
+      "description" : "Related handle discovered in controlled marketplace intelligence.",
+      "discoveryConfidence" : 0.8500,
+      "entityId" : 2,
+      "entityType" : "RELATED_HANDLE",
+      "entityValue" : "raven_alt"
+    },
+    "targetEntity" : {
+      "description" : "Synthetic writing-style representation used for similarity analysis.",
+      "discoveryConfidence" : 0.7800,
+      "entityId" : 11,
+      "entityType" : "WRITING_SIGNATURE",
+      "entityValue" : "RAVEN_STYLE_SIGNATURE_V1"
+    }
+  }, {
+    "assessment" : "INFERRED",
+    "description" : "The related handle shows a similar synthetic activity-time pattern.",
+    "relationshipId" : 10,
+    "relationshipType" : "SIMILAR_BEHAVIOR",
+    "sourceEntity" : {
+      "description" : "Related handle discovered in controlled marketplace intelligence.",
+      "discoveryConfidence" : 0.8500,
+      "entityId" : 2,
+      "entityType" : "RELATED_HANDLE",
+      "entityValue" : "raven_alt"
+    },
+    "targetEntity" : {
+      "description" : "Synthetic activity pattern showing repeated activity in the same time window.",
+      "discoveryConfidence" : 0.7600,
+      "entityId" : 10,
+      "entityType" : "BEHAVIOR_PATTERN",
+      "entityValue" : "NIGHT_ACTIVITY_01_00_03_30"
+    }
+  }, {
+    "assessment" : "OBSERVED",
+    "description" : "Controlled transaction records associate the wallet with marketplace activity.",
+    "relationshipId" : 11,
+    "relationshipType" : "TRANSACTED_WITH",
+    "sourceEntity" : {
+      "description" : "Synthetic wallet identifier associated with observed activity.",
+      "discoveryConfidence" : 0.8800,
+      "entityId" : 5,
+      "entityType" : "WALLET",
+      "entityValue" : "bc1qraven2026syntheticwallet"
+    },
+    "targetEntity" : {
+      "description" : "Synthetic marketplace used in the controlled investigation dataset.",
+      "discoveryConfidence" : 0.9000,
+      "entityId" : 6,
+      "entityType" : "MARKETPLACE",
+      "entityValue" : "DarkBazaar"
+    }
+  } ],
+  "evidence" : [ {
+    "description" : "The same synthetic email address was observed in account records associated with the investigated handle.",
+    "direction" : "SUPPORTS",
+    "evidenceId" : 1,
+    "evidenceType" : "EMAIL_MATCH",
+    "independenceGroup" : "IDENTITY_CONTACT",
+    "observedAt" : "2026-09-18T11:30:00",
+    "reliability" : "HIGH",
+    "source" : "Synthetic Intelligence Record S-01",
+    "strength" : "HIGH"
+  }, {
+    "description" : "The same synthetic PGP key fingerprint was observed with the investigated account.",
+    "direction" : "SUPPORTS",
+    "evidenceId" : 2,
+    "evidenceType" : "PGP_KEY_MATCH",
+    "independenceGroup" : "CRYPTOGRAPHIC",
+    "observedAt" : "2026-09-18T12:10:00",
+    "reliability" : "HIGH",
+    "source" : "Synthetic Intelligence Record S-02",
+    "strength" : "HIGH"
+  }, {
+    "description" : "The synthetic wallet was repeatedly associated with the investigated username in the controlled dataset.",
+    "direction" : "SUPPORTS",
+    "evidenceId" : 3,
+    "evidenceType" : "WALLET_MATCH",
+    "independenceGroup" : "FINANCIAL",
+    "observedAt" : "2026-09-18T13:00:00",
+    "reliability" : "HIGH",
+    "source" : "Synthetic Intelligence Record S-03",
+    "strength" : "HIGH"
+  }, {
+    "description" : "The investigated username was observed active on DarkBazaar.",
+    "direction" : "SUPPORTS",
+    "evidenceId" : 4,
+    "evidenceType" : "MARKETPLACE_OVERLAP",
+    "independenceGroup" : "MARKETPLACE_ACTIVITY",
+    "observedAt" : "2026-09-18T14:00:00",
+    "reliability" : "HIGH",
+    "source" : "Synthetic Intelligence Record S-04",
+    "strength" : "MEDIUM"
+  }, {
+    "description" : "The related handle raven_alt shares a distinctive naming pattern with r4v3n_mh.",
+    "direction" : "SUPPORTS",
+    "evidenceId" : 5,
+    "evidenceType" : "HANDLE_SIMILARITY",
+    "independenceGroup" : "HANDLE",
+    "observedAt" : "2026-09-18T14:30:00",
+    "reliability" : "MEDIUM",
+    "source" : "Synthetic Intelligence Record S-05",
+    "strength" : "LOW"
+  }, {
+    "description" : "Controlled infrastructure records associate the onion service with the synthetic clearnet domain.",
+    "direction" : "SUPPORTS",
+    "evidenceId" : 6,
+    "evidenceType" : "CLEARNET_INFRASTRUCTURE_MATCH",
+    "independenceGroup" : "INFRASTRUCTURE",
+    "observedAt" : "2026-09-19T09:00:00",
+    "reliability" : "HIGH",
+    "source" : "Synthetic Intelligence Record S-06",
+    "strength" : "HIGH"
+  }, {
+    "description" : "The same synthetic certificate fingerprint appears in the controlled infrastructure records.",
+    "direction" : "SUPPORTS",
+    "evidenceId" : 7,
+    "evidenceType" : "SSL_CERTIFICATE_MATCH",
+    "independenceGroup" : "INFRASTRUCTURE",
+    "observedAt" : "2026-09-19T09:15:00",
+    "reliability" : "HIGH",
+    "source" : "Synthetic Intelligence Record S-07",
+    "strength" : "HIGH"
+  }, {
+    "description" : "Controlled text samples show stylistic similarity between the known and related personas.",
+    "direction" : "SUPPORTS",
+    "evidenceId" : 8,
+    "evidenceType" : "STYLOMETRIC_SIMILARITY",
+    "independenceGroup" : "BEHAVIORAL",
+    "observedAt" : "2026-09-19T10:00:00",
+    "reliability" : "MEDIUM",
+    "source" : "Synthetic Intelligence Record S-08",
+    "strength" : "MEDIUM"
+  }, {
+    "description" : "The two controlled accounts show a similar activity window during repeated observations.",
+    "direction" : "SUPPORTS",
+    "evidenceId" : 9,
+    "evidenceType" : "BEHAVIOURAL_SIMILARITY",
+    "independenceGroup" : "BEHAVIORAL",
+    "observedAt" : "2026-09-19T10:30:00",
+    "reliability" : "MEDIUM",
+    "source" : "Synthetic Intelligence Record S-09",
+    "strength" : "MEDIUM"
+  }, {
+    "description" : "Synthetic transaction records associate the wallet with marketplace activity.",
+    "direction" : "SUPPORTS",
+    "evidenceId" : 10,
+    "evidenceType" : "TRANSACTION_LINK",
+    "independenceGroup" : "FINANCIAL",
+    "observedAt" : "2026-09-19T11:00:00",
+    "reliability" : "HIGH",
+    "source" : "Synthetic Intelligence Record S-10",
+    "strength" : "MEDIUM"
+  }, {
+    "description" : "One controlled observation shows a temporary activity-window mismatch for the related handle.",
+    "direction" : "CONTRADICTS",
+    "evidenceId" : 11,
+    "evidenceType" : "CONTRADICTING_SIGNAL",
+    "independenceGroup" : "BEHAVIORAL",
+    "observedAt" : "2026-09-19T11:30:00",
+    "reliability" : "MEDIUM",
+    "source" : "Synthetic Intelligence Record S-11",
+    "strength" : "LOW"
+  }, {
+    "description" : "A second controlled intelligence record references raven_alt in connection with the same marketplace cluster.",
+    "direction" : "SUPPORTS",
+    "evidenceId" : 12,
+    "evidenceType" : "SOURCE_CORROBORATION",
+    "independenceGroup" : "MARKETPLACE_CORROBORATION",
+    "observedAt" : "2026-09-19T12:00:00",
+    "reliability" : "HIGH",
+    "source" : "Synthetic Intelligence Record S-12",
+    "strength" : "MEDIUM"
+  } ],
+  "confidence" : {
+    "calculatedAt" : "2026-09-27T12:42:25",
+    "confidenceId" : 1,
+    "explanation" : "Attribution confidence score: 88.47/100. Risk level: HIGH. 11 supporting signal(s) and 1 contradicting signal(s) were considered. The score is an explainable prototype assessment and is not a calibrated probability or identity proof.",
+    "factorsJson" : "[{\"evidenceId\":1,\"type\":\"EMAIL_MATCH\",\"weight\":20.00,\"strength\":\"HIGH\",\"reliability\":\"HIGH\",\"direction\":\"SUPPORTS\"},{\"evidenceId\":2,\"type\":\"PGP_KEY_MATCH\",\"weight\":25.00,\"strength\":\"HIGH\",\"reliability\":\"HIGH\",\"direction\":\"SUPPORTS\"},{\"evidenceId\":3,\"type\":\"WALLET_MATCH\",\"weight\":20.00,\"strength\":\"HIGH\",\"reliability\":\"HIGH\",\"direction\":\"SUPPORTS\"},{\"evidenceId\":4,\"type\":\"MARKETPLACE_OVERLAP\",\"weight\":5.00,\"strength\":\"MEDIUM\",\"reliability\":\"HIGH\",\"direction\":\"SUPPORTS\"},{\"evidenceId\":5,\"type\":\"HANDLE_SIMILARITY\",\"weight\":5.00,\"strength\":\"LOW\",\"reliability\":\"MEDIUM\",\"direction\":\"SUPPORTS\"},{\"evidenceId\":6,\"type\":\"CLEARNET_INFRASTRUCTURE_MATCH\",\"weight\":20.00,\"strength\":\"HIGH\",\"reliability\":\"HIGH\",\"direction\":\"SUPPORTS\"},{\"evidenceId\":7,\"type\":\"SSL_CERTIFICATE_MATCH\",\"weight\":20.00,\"strength\":\"HIGH\",\"reliability\":\"HIGH\",\"direction\":\"SUPPORTS\"},{\"evidenceId\":8,\"type\":\"STYLOMETRIC_SIMILARITY\",\"weight\":10.00,\"strength\":\"MEDIUM\",\"reliability\":\"MEDIUM\",\"direction\":\"SUPPORTS\"},{\"evidenceId\":9,\"type\":\"BEHAVIOURAL_SIMILARITY\",\"weight\":10.00,\"strength\":\"MEDIUM\",\"reliability\":\"MEDIUM\",\"direction\":\"SUPPORTS\"},{\"evidenceId\":10,\"type\":\"TRANSACTION_LINK\",\"weight\":20.00,\"strength\":\"MEDIUM\",\"reliability\":\"HIGH\",\"direction\":\"SUPPORTS\"},{\"evidenceId\":11,\"type\":\"CONTRADICTING_SIGNAL\",\"weight\":5.00,\"strength\":\"LOW\",\"reliability\":\"MEDIUM\",\"direction\":\"CONTRADICTS\"},{\"evidenceId\":12,\"type\":\"SOURCE_CORROBORATION\",\"weight\":5.00,\"strength\":\"MEDIUM\",\"reliability\":\"HIGH\",\"direction\":\"SUPPORTS\"}]",
+    "riskLevel" : "HIGH",
+    "score" : 88.47
+  },
+  "review" : {
+    "findingId" : 1,
+    "note" : "Synthetic golden case loaded. Inferred relationships require investigator review.",
+    "status" : "PENDING",
+    "updatedAt" : "2026-09-20T10:15:00"
+  },
+  "timeline" : [ {
+    "evidenceId" : 1,
+    "timestamp" : "2026-09-18T11:30:00",
+    "type" : "EMAIL_MATCH",
+    "source" : "Synthetic Intelligence Record S-01",
+    "description" : "The same synthetic email address was observed in account records associated with the investigated handle.",
+    "direction" : "SUPPORTS",
+    "strength" : "HIGH"
+  }, {
+    "evidenceId" : 2,
+    "timestamp" : "2026-09-18T12:10:00",
+    "type" : "PGP_KEY_MATCH",
+    "source" : "Synthetic Intelligence Record S-02",
+    "description" : "The same synthetic PGP key fingerprint was observed with the investigated account.",
+    "direction" : "SUPPORTS",
+    "strength" : "HIGH"
+  }, {
+    "evidenceId" : 3,
+    "timestamp" : "2026-09-18T13:00:00",
+    "type" : "WALLET_MATCH",
+    "source" : "Synthetic Intelligence Record S-03",
+    "description" : "The synthetic wallet was repeatedly associated with the investigated username in the controlled dataset.",
+    "direction" : "SUPPORTS",
+    "strength" : "HIGH"
+  }, {
+    "evidenceId" : 4,
+    "timestamp" : "2026-09-18T14:00:00",
+    "type" : "MARKETPLACE_OVERLAP",
+    "source" : "Synthetic Intelligence Record S-04",
+    "description" : "The investigated username was observed active on DarkBazaar.",
+    "direction" : "SUPPORTS",
+    "strength" : "MEDIUM"
+  }, {
+    "evidenceId" : 5,
+    "timestamp" : "2026-09-18T14:30:00",
+    "type" : "HANDLE_SIMILARITY",
+    "source" : "Synthetic Intelligence Record S-05",
+    "description" : "The related handle raven_alt shares a distinctive naming pattern with r4v3n_mh.",
+    "direction" : "SUPPORTS",
+    "strength" : "LOW"
+  }, {
+    "evidenceId" : 6,
+    "timestamp" : "2026-09-19T09:00:00",
+    "type" : "CLEARNET_INFRASTRUCTURE_MATCH",
+    "source" : "Synthetic Intelligence Record S-06",
+    "description" : "Controlled infrastructure records associate the onion service with the synthetic clearnet domain.",
+    "direction" : "SUPPORTS",
+    "strength" : "HIGH"
+  }, {
+    "evidenceId" : 7,
+    "timestamp" : "2026-09-19T09:15:00",
+    "type" : "SSL_CERTIFICATE_MATCH",
+    "source" : "Synthetic Intelligence Record S-07",
+    "description" : "The same synthetic certificate fingerprint appears in the controlled infrastructure records.",
+    "direction" : "SUPPORTS",
+    "strength" : "HIGH"
+  }, {
+    "evidenceId" : 8,
+    "timestamp" : "2026-09-19T10:00:00",
+    "type" : "STYLOMETRIC_SIMILARITY",
+    "source" : "Synthetic Intelligence Record S-08",
+    "description" : "Controlled text samples show stylistic similarity between the known and related personas.",
+    "direction" : "SUPPORTS",
+    "strength" : "MEDIUM"
+  }, {
+    "evidenceId" : 9,
+    "timestamp" : "2026-09-19T10:30:00",
+    "type" : "BEHAVIOURAL_SIMILARITY",
+    "source" : "Synthetic Intelligence Record S-09",
+    "description" : "The two controlled accounts show a similar activity window during repeated observations.",
+    "direction" : "SUPPORTS",
+    "strength" : "MEDIUM"
+  }, {
+    "evidenceId" : 10,
+    "timestamp" : "2026-09-19T11:00:00",
+    "type" : "TRANSACTION_LINK",
+    "source" : "Synthetic Intelligence Record S-10",
+    "description" : "Synthetic transaction records associate the wallet with marketplace activity.",
+    "direction" : "SUPPORTS",
+    "strength" : "MEDIUM"
+  }, {
+    "evidenceId" : 11,
+    "timestamp" : "2026-09-19T11:30:00",
+    "type" : "CONTRADICTING_SIGNAL",
+    "source" : "Synthetic Intelligence Record S-11",
+    "description" : "One controlled observation shows a temporary activity-window mismatch for the related handle.",
+    "direction" : "CONTRADICTS",
+    "strength" : "LOW"
+  }, {
+    "evidenceId" : 12,
+    "timestamp" : "2026-09-19T12:00:00",
+    "type" : "SOURCE_CORROBORATION",
+    "source" : "Synthetic Intelligence Record S-12",
+    "description" : "A second controlled intelligence record references raven_alt in connection with the same marketplace cluster.",
+    "direction" : "SUPPORTS",
+    "strength" : "MEDIUM"
+  } ],
+  "graph" : {
+    "nodes" : [ {
+      "id" : 1,
+      "type" : "USERNAME",
+      "value" : "r4v3n_mh",
+      "discoveryConfidence" : 1.0000
+    }, {
+      "id" : 2,
+      "type" : "RELATED_HANDLE",
+      "value" : "raven_alt",
+      "discoveryConfidence" : 0.8500
+    }, {
+      "id" : 3,
+      "type" : "EMAIL",
+      "value" : "raven.mh@example.test",
+      "discoveryConfidence" : 0.9200
+    }, {
+      "id" : 4,
+      "type" : "PGP_KEY",
+      "value" : "0xA1B2C3D4E5F6",
+      "discoveryConfidence" : 0.9500
+    }, {
+      "id" : 5,
+      "type" : "WALLET",
+      "value" : "bc1qraven2026syntheticwallet",
+      "discoveryConfidence" : 0.8800
+    }, {
+      "id" : 6,
+      "type" : "MARKETPLACE",
+      "value" : "DarkBazaar",
+      "discoveryConfidence" : 0.9000
+    }, {
+      "id" : 7,
+      "type" : "ONION_SERVICE",
+      "value" : "r4v3nmarketexample.onion",
+      "discoveryConfidence" : 0.8200
+    }, {
+      "id" : 8,
+      "type" : "DOMAIN",
+      "value" : "raven-services.example",
+      "discoveryConfidence" : 0.8100
+    }, {
+      "id" : 9,
+      "type" : "SSL_CERTIFICATE",
+      "value" : "SHA256-SIMULATED-CERT-RAVEN-2026",
+      "discoveryConfidence" : 0.9000
+    }, {
+      "id" : 10,
+      "type" : "BEHAVIOR_PATTERN",
+      "value" : "NIGHT_ACTIVITY_01_00_03_30",
+      "discoveryConfidence" : 0.7600
+    }, {
+      "id" : 11,
+      "type" : "WRITING_SIGNATURE",
+      "value" : "RAVEN_STYLE_SIGNATURE_V1",
+      "discoveryConfidence" : 0.7800
+    } ],
+    "edges" : [ {
+      "id" : 1,
+      "source" : 1,
+      "target" : 3,
+      "type" : "USES_EMAIL",
+      "assessment" : "OBSERVED"
+    }, {
+      "id" : 2,
+      "source" : 1,
+      "target" : 4,
+      "type" : "USES_PGP_KEY",
+      "assessment" : "OBSERVED"
+    }, {
+      "id" : 3,
+      "source" : 1,
+      "target" : 5,
+      "type" : "LINKED_WALLET",
+      "assessment" : "INFERRED"
+    }, {
+      "id" : 4,
+      "source" : 1,
+      "target" : 6,
+      "type" : "ACTIVE_ON",
+      "assessment" : "OBSERVED"
+    }, {
+      "id" : 5,
+      "source" : 2,
+      "target" : 6,
+      "type" : "ACTIVE_ON",
+      "assessment" : "OBSERVED"
+    }, {
+      "id" : 6,
+      "source" : 1,
+      "target" : 2,
+      "type" : "ALIAS_OF",
+      "assessment" : "INFERRED"
+    }, {
+      "id" : 7,
+      "source" : 7,
+      "target" : 8,
+      "type" : "LINKED_TO_CLEARNET",
+      "assessment" : "INFERRED"
+    }, {
+      "id" : 8,
+      "source" : 8,
+      "target" : 9,
+      "type" : "CERTIFICATE_MATCH",
+      "assessment" : "OBSERVED"
+    }, {
+      "id" : 9,
+      "source" : 2,
+      "target" : 11,
+      "type" : "SIMILAR_WRITING",
+      "assessment" : "INFERRED"
+    }, {
+      "id" : 10,
+      "source" : 2,
+      "target" : 10,
+      "type" : "SIMILAR_BEHAVIOR",
+      "assessment" : "INFERRED"
+    }, {
+      "id" : 11,
+      "source" : 5,
+      "target" : 6,
+      "type" : "TRANSACTED_WITH",
+      "assessment" : "OBSERVED"
+    } ]
+  },
+  "disclaimer" : "This report is generated from a controlled synthetic investigation dataset. The attribution-confidence score is an explainable prototype assessment and is not identity proof or a calibrated probability."
+}

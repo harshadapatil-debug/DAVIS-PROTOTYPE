@@ -319,8 +319,380 @@ Known Indicator
 → Evidence Creation
 → Confidence Calculation
 
+---------------------------------------------------------------------
+# imp. AI/ML ROLE
+
+AI/ML is an analysis-support layer inside the investigation pipeline.
+
+Its purpose is to turn controlled intelligence into structured, usable
+investigation signals.
+
+AIML has THREE required prototype responsibilities:
+
+1. ENTITY EXTRACTION
+2. SIMILARITY / BEHAVIOURAL ANALYSIS
+3. RELATIONSHIP CANDIDATE DETECTION
+
+AIML MUST NOT make the final attribution decision.
+
+The final attribution-confidence score is calculated by the backend
+confidence engine from normalized evidence.
+
 ---
 
+# 12. AIML INPUT
+
+AIML receives controlled/synthetic intelligence associated with the
+investigation indicator.
+
+Example input:
+
+{
+  "caseId": 101,
+  "indicatorId": 501,
+  "indicatorType": "USERNAME",
+  "indicatorValue": "r4v3n_mh",
+  "intelligence": [
+    {
+      "source": "Synthetic Intelligence Record S-01",
+      "text": "Account r4v3n_mh was active on DarkBazaar."
+    },
+    {
+      "source": "Synthetic Intelligence Record S-02",
+      "text": "The account used PGP key 0xA1B2C3D4."
+    },
+    {
+      "source": "Synthetic Intelligence Record S-03",
+      "text": "Related handle raven_alt showed similar writing patterns."
+    }
+  ]
+}
+
+AIML may process the text and structured intelligence.
+
+---
+
+# 13. AIML OUTPUT
+
+AIML must return normalized results.
+
+Minimum output:
+
+{
+  "caseId": 101,
+
+  "entities": [],
+
+  "candidateRelationships": [],
+
+  "evidence": []
+}
+
+The backend converts these results into the canonical DAVIS data model.
+
+---
+
+# 14. AIML ENTITY EXTRACTION
+
+AIML identifies useful observable entities from controlled intelligence.
+
+Example:
+
+{
+  "entityType": "PGP_KEY",
+  "entityValue": "0xA1B2C3D4",
+  "description": "PGP key mentioned in the intelligence record.",
+  "discoveryConfidence": 0.92
+}
+
+AIML may extract:
+
+USERNAME
+RELATED_HANDLE
+EMAIL
+ACCOUNT
+PGP_KEY
+WALLET
+TRANSACTION
+MARKETPLACE
+FORUM
+DOMAIN
+IP_ADDRESS
+ONION_SERVICE
+SERVER
+INFRASTRUCTURE
+SSL_CERTIFICATE
+BEHAVIOR_PATTERN
+WRITING_SIGNATURE
+
+AIML MUST NOT invent entities that are not supported by the supplied
+intelligence.
+
+---
+
+# 15. AIML SIMILARITY ANALYSIS
+
+AIML may identify similarity between observed personas/accounts.
+
+Prototype-supported signals include:
+
+STYLOMETRIC_SIMILARITY
+BEHAVIOURAL_SIMILARITY
+ACTIVITY_PATTERN_MATCH
+
+Example:
+
+{
+  "type": "STYLOMETRIC_SIMILARITY",
+  "score": 0.88,
+  "description": "The two controlled text samples show high stylistic similarity."
+}
+
+The similarity score is an AIML signal.
+
+It is NOT the final attribution-confidence score.
+
+Example:
+
+0.88 similarity
+
+does NOT mean:
+
+88% probability of same person.
+
+---
+
+# 16. AIML RELATIONSHIP CANDIDATES
+
+AIML may suggest relationships between extracted entities.
+
+Example:
+
+{
+  "sourceEntityId": 1,
+  "targetEntityId": 6,
+  "relationshipType": "SIMILAR_WRITING",
+  "description": "The writing samples show stylistic similarity.",
+  "assessment": "INFERRED"
+}
+
+The backend stores the relationship only after validating that the referenced
+entities and supporting evidence belong to the case.
+
+AIML-generated relationships should normally be marked:
+
+INFERRED
+
+because they are analytical conclusions rather than directly observed facts.
+
+---
+
+# 17. AIML EVIDENCE GENERATION
+
+Every AI-generated relationship must have supporting evidence.
+
+Example:
+
+{
+  "evidenceType": "STYLOMETRIC_SIMILARITY",
+  "source": "Synthetic Intelligence Record S-03",
+  "description": "Text samples from the two accounts show similar writing characteristics.",
+  "strength": "MEDIUM",
+  "reliability": "MEDIUM",
+  "direction": "SUPPORTS",
+  "independenceGroup": "BEHAVIORAL",
+  "observedAt": "2026-09-19T14:00:00"
+}
+
+Therefore:
+
+AI relationship
+→ supporting evidence
+→ backend persistence
+→ confidence engine
+
+AIML must not directly write a final confidence score.
+
+---
+
+# 18. AIML AND INFRASTRUCTURE CORRELATION
+
+Where controlled intelligence contains infrastructure information, AIML may
+extract and classify:
+
+ONION_SERVICE
+DOMAIN
+IP_ADDRESS
+SERVER
+SSL_CERTIFICATE
+INFRASTRUCTURE
+
+It may identify candidate signals such as:
+
+SERVER_STATUS_EXPOSURE
+SSL_CERTIFICATE_MATCH
+DEFAULT_SERVICE_BANNER
+DESCRIPTOR_INCONSISTENCY
+CLEARNET_INFRASTRUCTURE_MATCH
+INFRASTRUCTURE_REUSE
+
+These become normal DAVIS evidence records.
+
+The prototype does not require a live crawler or automated Tor scanning engine.
+
+---
+
+# 19. AIML AND CROSS-MARKETPLACE CORRELATION
+
+AIML may identify repeated or related:
+
+USERNAMES
+RELATED_HANDLES
+EMAILS
+PGP_KEYS
+WALLETS
+MARKETPLACES
+
+It may suggest relationships such as:
+
+ALIAS_OF
+ACTIVE_ON
+SHARED_PGP_KEY
+SHARED_WALLET
+USES_EMAIL
+POSSIBLE_SAME_ACTOR
+
+The relationship must be backed by evidence.
+
+---
+
+# 20. AIML AND PERSONA LINKAGE
+
+AIML may provide one or more supporting persona signals:
+
+STYLOMETRIC_SIMILARITY
+BEHAVIOURAL_SIMILARITY
+ACTIVITY_PATTERN_MATCH
+
+These signals are supporting evidence only.
+
+AIML must NOT output:
+
+"These accounts belong to the same person."
+
+Instead it should output a candidate analytical relationship such as:
+
+"POSSIBLE_SAME_PERSONA"
+
+with supporting evidence.
+
+---
+
+# 21. AIML CONFIDENCE VS ATTRIBUTION CONFIDENCE
+
+AIML may have internal confidence values for:
+
+- entity extraction
+- similarity
+- candidate relationship detection
+
+These values describe the reliability of that specific AI operation.
+
+They must NOT be confused with the DAVIS attribution-confidence score.
+
+Example:
+
+Entity extraction confidence = 0.92
+
+Similarity score = 0.88
+
+Attribution-confidence score = 84.0
+
+These are three different concepts.
+
+---
+
+# 22. AIML FAILURE RULE
+
+If AIML cannot confidently extract or infer something:
+
+- it must not fabricate the result
+- it may return no result
+- it may mark the result as low confidence
+- the investigation must continue using other available evidence
+
+A failed AI extraction must not break the entire investigation.
+
+---
+
+# 23. AIML HUMAN-REVIEW RULE
+
+AI-generated relationships are candidates for investigation.
+
+The investigator remains responsible for reviewing the evidence.
+
+Therefore:
+
+AIML
+→ Candidate relationship
+→ Evidence
+→ Confidence assessment
+→ Investigator review
+
+NOT:
+
+AIML
+→ Final identity decision
+
+---
+
+# 24. AIML IMPLEMENTATION SCOPE
+
+The prototype does NOT require:
+
+- a research-grade neural network
+- training a large model from scratch
+- a large labelled dataset
+- advanced graph ML
+- full-scale stylometric research
+- advanced behavioural modelling
+- autonomous identity resolution
+
+The prototype only needs enough AIML to demonstrate useful extraction,
+similarity and relationship-support signals using controlled data.
+
+Rule-based, lightweight NLP, pretrained models, embeddings or other practical
+methods may be used as long as the output follows this contract.
+
+---
+
+# 25. AIML END-TO-END ROLE
+
+The complete role of AIML in DAVIS is:
+
+CONTROLLED INTELLIGENCE
+↓
+ENTITY EXTRACTION
+↓
+SIMILARITY ANALYSIS
+↓
+RELATIONSHIP CANDIDATES
+↓
+SUPPORTING EVIDENCE
+↓
+BACKEND
+↓
+CONFIDENCE ENGINE
+↓
+INVESTIGATOR REVIEW
+
+AIML is an analytical assistant.
+
+The confidence engine is responsible for the final evidence-based
+attribution-confidence assessment.
+
+The investigator remains the final reviewer.
+------------------------------------------------------------------
 # 11. ENTITY
 
 An entity is an observable object identified during the investigation.
