@@ -66,7 +66,17 @@ public class ConfidenceEngineService {
                                         .getRelationshipId()))
                 .toList();
 
-        double score = calculateScore(evidenceList);
+        /*
+         * Use the case creation time as the fixed reference point
+         * for recency calculations.
+         *
+         * This keeps the confidence score stable when the same
+         * case is investigated again later.
+         */
+        double score = calculateScore(
+                evidenceList,
+                caseEntity.getCreatedAt()
+        );
 
         String riskLevel = determineRiskLevel(score);
 
@@ -100,12 +110,43 @@ public class ConfidenceEngineService {
         confidenceScore.setRiskLevel(riskLevel);
         confidenceScore.setExplanation(explanation);
         confidenceScore.setFactorsJson(factorsJson);
+
+        /*
+         * calculatedAt is allowed to change because it records
+         * when the calculation was performed.
+         *
+         * This does NOT affect the score.
+         */
         confidenceScore.setCalculatedAt(LocalDateTime.now());
 
         return confidenceScoreRepository.save(confidenceScore);
     }
 
+    /*
+     * Public method retained for compatibility with the
+     * stress-test service.
+     */
     public double calculateScore(List<Evidence> evidenceList) {
+
+        if (evidenceList.isEmpty()) {
+            return 0.0;
+        }
+
+        LocalDateTime referenceTime =
+                resolveReferenceTime(evidenceList);
+
+        return calculateScore(
+                evidenceList,
+                referenceTime
+        );
+    }
+
+    /*
+     * Core scoring method.
+     */
+    private double calculateScore(
+            List<Evidence> evidenceList,
+            LocalDateTime referenceTime) {
 
         if (evidenceList.isEmpty()) {
             return 0.0;
@@ -125,7 +166,10 @@ public class ConfidenceEngineService {
                     getLevelFactor(evidence.getReliability());
 
             double recencyFactor =
-                    getRecencyFactor(evidence.getObservedAt());
+                    getRecencyFactor(
+                            evidence.getObservedAt(),
+                            referenceTime
+                    );
 
             double directionFactor =
                     getDirectionFactor(evidence.getDirection());
@@ -158,6 +202,42 @@ public class ConfidenceEngineService {
         double score = Math.min(total, 100.0);
 
         return Math.max(score, 0.0);
+    }
+
+    /*
+     * Resolve a stable reference time from the case associated
+     * with the supplied evidence.
+     *
+     * Fallback uses the latest evidence timestamp rather than
+     * the current clock, so the calculation remains deterministic.
+     */
+    private LocalDateTime resolveReferenceTime(
+            List<Evidence> evidenceList) {
+
+        for (Evidence evidence : evidenceList) {
+
+            if (evidence.getRelationship() == null) {
+                continue;
+            }
+
+            Relationship relationship =
+                    evidence.getRelationship();
+
+            Case caseEntity =
+                    relationship.getCaseEntity();
+
+            if (caseEntity != null
+                    && caseEntity.getCreatedAt() != null) {
+
+                return caseEntity.getCreatedAt();
+            }
+        }
+
+        return evidenceList.stream()
+                .map(Evidence::getObservedAt)
+                .filter(Objects::nonNull)
+                .max(LocalDateTime::compareTo)
+                .orElse(LocalDateTime.of(1970, 1, 1, 0, 0));
     }
 
     private double getEvidenceTypeWeight(String evidenceType) {
@@ -231,9 +311,15 @@ public class ConfidenceEngineService {
         };
     }
 
-    private double getRecencyFactor(LocalDateTime observedAt) {
+    /*
+     * Recency is now calculated relative to a fixed reference time
+     * instead of LocalDateTime.now().
+     */
+    private double getRecencyFactor(
+            LocalDateTime observedAt,
+            LocalDateTime referenceTime) {
 
-        if (observedAt == null) {
+        if (observedAt == null || referenceTime == null) {
             return 0.5;
         }
 
@@ -242,7 +328,7 @@ public class ConfidenceEngineService {
                         0,
                         ChronoUnit.DAYS.between(
                                 observedAt,
-                                LocalDateTime.now()
+                                referenceTime
                         )
                 );
 
