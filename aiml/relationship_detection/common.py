@@ -1,84 +1,74 @@
-"""
-common.py
-----------
-Shared helpers for the relationship_detection package. Kept in one place
-so relationship_detector.py and the three correlation modules
-(marketplace / infrastructure / persona) all build relationship and
-evidence objects the exact same way, with deterministic IDs.
-"""
+import re
+from collections import defaultdict
+from typing import Dict, List, Tuple
 
-import hashlib
-from typing import Dict, List, Optional
+from ..entity_extraction.extractor import HANDLE_TYPES
+from ..models import Entity, EvidenceDraft, ExtractionResult, Record
+
+_ORDER = {"LOW": 0, "MEDIUM": 1, "HIGH": 2}
+GROUP_CUE_RE = re.compile(r"\b(?:both|shared|same|common)\b", re.I)
 
 
-def make_relationship_id(source_id: str, target_id: str, rel_type: str) -> str:
-    """Deterministic relationship ID from (source, target, type)."""
-    digest = hashlib.md5(f"{source_id}:{target_id}:{rel_type}".encode("utf-8")).hexdigest()[:8]
-    return f"REL-{digest}"
+def min_level(levels: List[str]) -> str:
+    return min(levels, key=lambda x: _ORDER[x]) if levels else "MEDIUM"
 
 
-def make_evidence_id(evidence_type: str, source_record_ids: List[str]) -> str:
-    """Deterministic evidence ID from (type, sorted source record ids)."""
-    key = f"{evidence_type}:" + ",".join(sorted(source_record_ids or []))
-    digest = hashlib.md5(key.encode("utf-8")).hexdigest()[:8]
-    return f"EVD-{digest}"
+def lower(strength: str) -> str:
+    return {"HIGH": "MEDIUM", "MEDIUM": "LOW", "LOW": "LOW"}[strength]
 
 
-def new_relationship(source_entity_id: str, target_entity_id: str,
-                      relationship_type: str, description: str,
-                      assessment: str, evidence_ids: Optional[List[str]] = None) -> Dict:
-    """
-    Build one normalized candidate relationship.
+class Ctx:
+    """Read-only view over extraction output with owner resolution for identifiers."""
 
-    assessment must be "OBSERVED" (directly stated by a single record) or
-    "INFERRED" (produced via correlation/analysis across records).
-    """
-    assert assessment in ("OBSERVED", "INFERRED"), "assessment must be OBSERVED or INFERRED"
-    return {
-        "relationshipId": make_relationship_id(source_entity_id, target_entity_id, relationship_type),
-        "sourceEntityId": source_entity_id,
-        "targetEntityId": target_entity_id,
-        "relationshipType": relationship_type,
-        "description": description,
-        "assessment": assessment,
-        "evidenceIds": evidence_ids or [],
-    }
+    def __init__(self, ex: ExtractionResult):
+        self.ex = ex
+        self.records = ex.records
+        self.entities: Dict[int, Entity] = {e.entityId: e for e in ex.entities}
+        self.by_record = defaultdict(list)
+        for m in ex.mentions:
+            self.by_record[m.record_idx].append(m)
+        for lst in self.by_record.values():
+            lst.sort(key=lambda m: m.start)
 
+    def etype(self, eid: int) -> str:
+        return self.entities[eid].entityType
 
-def new_evidence(evidence_type: str, description: str,
-                  source_record_ids: List[str], score: Optional[float] = None,
-                  direction: str = "SUPPORTS") -> Dict:
-    """
-    Build one normalized evidence object.
+    def name(self, eid: int) -> str:
+        return self.entities[eid].entityValue
 
-    direction must be one of SUPPORTS / WEAKENS / CONTRADICTS / NEUTRAL.
-    """
-    assert direction in ("SUPPORTS", "WEAKENS", "CONTRADICTS", "NEUTRAL"), (
-        "direction must be SUPPORTS, WEAKENS, CONTRADICTS or NEUTRAL"
-    )
-    return {
-        "evidenceId": make_evidence_id(evidence_type, source_record_ids),
-        "evidenceType": evidence_type,
-        "description": description,
-        "score": score,
-        "sourceReference": ", ".join(source_record_ids or []),
-        "direction": direction,
-        "supportingRecordIds": source_record_ids or [],
-    }
+    def handle_mentions(self, ridx: int):
+        return [m for m in self.by_record[ridx] if self.etype(m.entity_id) in HANDLE_TYPES]
+
+    def owners(self, ridx: int, pos: int) -> Tuple[List[int], bool]:
+        """Handle entity ids an item at `pos` belongs to, and whether that attribution is ambiguous."""
+        hs = self.handle_mentions(ridx)
+        ids = list(dict.fromkeys(m.entity_id for m in hs))
+        if not ids:
+            return [], False
+        if len(ids) == 1:
+            return ids, False
+        if GROUP_CUE_RE.search(self.records[ridx].text):
+            return ids, False
+        before = [m for m in hs if m.end <= pos]
+        if before:
+            return [before[-1].entity_id], True
+        return [min(hs, key=lambda m: abs(m.start - pos)).entity_id], True
 
 
-def evidence_from_similarity_signal(signal: Dict, supports_threshold: float = 0.5) -> Dict:
-    """
-    Convert a raw similarity-module output (the {"type", "score",
-    "description", "sourceRecordIds"} shape produced by
-    aiml/similarity/*.py) into a fully normalized evidence object.
-    """
-    score = signal.get("score", 0.0) or 0.0
-    direction = "SUPPORTS" if score >= supports_threshold else "NEUTRAL"
-    return new_evidence(
-        evidence_type=signal["type"],
-        description=signal["description"],
-        source_record_ids=signal.get("sourceRecordIds", []),
-        score=score,
+def make_evidence(etype: str, recs: List[Record], description: str, strength: str,
+                  group: str, direction: str = "SUPPORTS") -> EvidenceDraft:
+    seen, sources = set(), []
+    for r in recs:
+        if r.source not in seen:
+            seen.add(r.source)
+            sources.append(r.source)
+    return EvidenceDraft(
+        evidenceType=etype,
+        source="; ".join(sources),
+        description=description,
+        strength=strength,
+        reliability=min_level([r.reliability for r in recs]),
         direction=direction,
+        independenceGroup=group,
+        observedAt=max(r.observed_at for r in recs),
     )

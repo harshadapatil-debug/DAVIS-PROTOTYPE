@@ -1,1 +1,1 @@
-"""Similarity package: text, stylometric, behavioural and activity similarity signals."""
+from .analyzer import analyze  # noqa: F401

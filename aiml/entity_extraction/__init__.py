@@ -1,1 +1,1 @@
-"""Entity extraction package: turns controlled intelligence into normalized entities."""
+from .extractor import extract, HANDLE_TYPES  # noqa: F401

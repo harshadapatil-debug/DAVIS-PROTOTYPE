@@ -1,1 +1,2 @@
-"""Relationship detection package: candidate relationships + supporting evidence."""
+from .detector import detect  # noqa: F401
+from .common import Ctx  # noqa: F401

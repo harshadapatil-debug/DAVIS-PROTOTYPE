@@ -1,1 +1,1 @@
-"""AIML service package: exposes the end-to-end pipeline for backend integration."""
+from .pipeline import run_pipeline  # noqa: F401
