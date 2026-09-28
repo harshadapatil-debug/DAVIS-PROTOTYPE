@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -33,172 +34,286 @@ public class PdfExportService {
 
             PdfWriter writer = new PdfWriter(document);
 
-            writer.writeTitle(
-                    String.valueOf(
-                            report.get("reportTitle")
-                    )
+            // =========================================================
+            // TITLE
+            // =========================================================
+
+            writer.writeTitle("DAVIS Investigation Report");
+
+            writer.writeLine(
+                    "Generated from the controlled investigation dataset."
             );
 
             writer.writeLine("");
 
-            writer.writeHeading("CASE INFORMATION");
+            // =========================================================
+            // 1. CASE INFORMATION
+            // =========================================================
+
+            writer.writeHeading("1. CASE INFORMATION");
 
             Object caseObject = report.get("case");
 
             if (caseObject instanceof Map<?, ?> caseData) {
 
-                writer.writeLine(
-                        "Case ID: " +
-                                String.valueOf(
-                                        caseData.get("caseId"))
+                writer.writeField(
+                        "Case ID",
+                        caseData.get("caseId")
                 );
 
-                writer.writeLine(
-                        "Case Name: " +
-                                String.valueOf(
-                                        caseData.get("caseName"))
+                writer.writeField(
+                        "Case Name",
+                        caseData.get("caseName")
                 );
 
-                writer.writeLine(
-                        "Case Type: " +
-                                String.valueOf(
-                                        caseData.get("caseType"))
+                writer.writeField(
+                        "Case Type",
+                        caseData.get("caseType")
                 );
 
-                writer.writeLine(
-                        "Category: " +
-                                String.valueOf(
-                                        caseData.get("category"))
+                writer.writeField(
+                        "Category",
+                        caseData.get("category")
                 );
 
-                writer.writeLine(
-                        "Status: " +
-                                String.valueOf(
-                                        caseData.get("status"))
+                writer.writeField(
+                        "Status",
+                        caseData.get("status")
+                );
+
+                writer.writeField(
+                        "Created At",
+                        caseData.get("createdAt")
+                );
+
+                writer.writeField(
+                        "Last Scan At",
+                        caseData.get("lastScanAt")
                 );
             }
 
             writer.writeLine("");
 
-            writer.writeHeading("KNOWN INDICATOR");
+            // =========================================================
+            // 2. KNOWN INDICATOR
+            // =========================================================
+
+            writer.writeHeading("2. KNOWN INDICATOR");
 
             Object indicator =
                     report.get("knownIndicator");
 
             if (indicator instanceof Map<?, ?> indicatorData) {
 
-                writer.writeLine(
-                        "Type: " +
-                                String.valueOf(
-                                        indicatorData.get(
-                                                "indicatorType"))
+                writer.writeField(
+                        "Indicator Type",
+                        indicatorData.get("indicatorType")
                 );
 
-                writer.writeLine(
-                        "Value: " +
-                                String.valueOf(
-                                        indicatorData.get(
-                                                "indicatorValue"))
+                writer.writeField(
+                        "Indicator Value",
+                        indicatorData.get("indicatorValue")
                 );
+            } else {
+                writer.writeLine("No known indicator available.");
             }
 
             writer.writeLine("");
 
-            writer.writeHeading("SUMMARY");
+            // =========================================================
+            // 3. INVESTIGATION SUMMARY
+            // =========================================================
+
+            writer.writeHeading("3. INVESTIGATION SUMMARY");
 
             Object summary =
                     report.get("summary");
 
             if (summary instanceof Map<?, ?> summaryData) {
 
-                writer.writeLine(
-                        "Entities: " +
-                                String.valueOf(
-                                        summaryData.get(
-                                                "entityCount"))
+                writer.writeField(
+                        "Indicators",
+                        summaryData.get("indicatorCount")
                 );
 
-                writer.writeLine(
-                        "Relationships: " +
-                                String.valueOf(
-                                        summaryData.get(
-                                                "relationshipCount"))
+                writer.writeField(
+                        "Entities",
+                        summaryData.get("entityCount")
                 );
 
-                writer.writeLine(
-                        "Evidence records: " +
-                                String.valueOf(
-                                        summaryData.get(
-                                                "evidenceCount"))
+                writer.writeField(
+                        "Relationships",
+                        summaryData.get("relationshipCount")
                 );
 
-                writer.writeLine(
-                        "Timeline events: " +
-                                String.valueOf(
-                                        summaryData.get(
-                                                "timelineEventCount"))
+                writer.writeField(
+                        "Evidence Records",
+                        summaryData.get("evidenceCount")
+                );
+
+                /*
+                 * The current InvestigationService does not expose
+                 * timelineEventCount in the summary.
+                 *
+                 * Therefore we calculate it from the actual timeline
+                 * instead of displaying a missing/null value.
+                 */
+                Object timelineObject =
+                        report.get("timeline");
+
+                int timelineCount = 0;
+
+                if (timelineObject instanceof List<?> timelineList) {
+                    timelineCount = timelineList.size();
+                }
+
+                writer.writeField(
+                        "Timeline Events",
+                        timelineCount
                 );
             }
 
             writer.writeLine("");
 
-            writer.writeHeading("ENTITIES");
+            // =========================================================
+            // 4. DISCOVERED ENTITIES
+            // =========================================================
+
+            writer.writeHeading("4. DISCOVERED ENTITIES");
 
             Object entities =
                     report.get("entities");
 
-            if (entities instanceof List<?> entityList) {
+            if (entities instanceof List<?> entityList
+                    && !entityList.isEmpty()) {
 
                 for (Object item : entityList) {
 
                     if (item instanceof Map<?, ?> entity) {
 
                         writer.writeLine(
-                                entity.get("entityId")
+                                String.valueOf(
+                                        entity.get("entityId"))
                                         + " | "
-                                        + entity.get("entityType")
+                                        + String.valueOf(
+                                        entity.get("entityType"))
                                         + " | "
-                                        + entity.get("entityValue")
+                                        + String.valueOf(
+                                        entity.get("entityValue"))
                         );
+
+                        Object description =
+                                entity.get("description");
+
+                        if (description != null
+                                && !String.valueOf(
+                                description).isBlank()) {
+
+                            writer.writeIndented(
+                                    "Description",
+                                    description
+                            );
+                        }
+
+                        Object discoveryConfidence =
+                                entity.get(
+                                        "discoveryConfidence");
+
+                        if (discoveryConfidence != null) {
+
+                            writer.writeIndented(
+                                    "Discovery Confidence",
+                                    discoveryConfidence
+                            );
+                        }
                     }
                 }
+
+            } else {
+
+                writer.writeLine(
+                        "No entities were discovered."
+                );
             }
 
             writer.writeLine("");
 
-            writer.writeHeading("RELATIONSHIPS");
+            // =========================================================
+            // 5. RELATIONSHIPS
+            // =========================================================
+
+            writer.writeHeading("5. RELATIONSHIPS");
 
             Object relationships =
                     report.get("relationships");
 
-            if (relationships instanceof List<?> relationshipList) {
+            if (relationships instanceof List<?> relationshipList
+                    && !relationshipList.isEmpty()) {
 
                 for (Object item : relationshipList) {
 
                     if (item instanceof Map<?, ?> relationship) {
 
                         writer.writeLine(
-                                relationship.get(
-                                        "relationshipId")
+                                String.valueOf(
+                                        relationship.get(
+                                                "relationshipId"))
                                         + " | "
-                                        + relationship.get(
-                                                "relationshipType")
+                                        + String.valueOf(
+                                        relationship.get(
+                                                "relationshipType"))
                                         + " | "
-                                        + relationship.get(
-                                                "assessment")
+                                        + String.valueOf(
+                                        relationship.get(
+                                                "assessment"))
                         );
+
+                        writer.writeIndented(
+                                "Source Entity",
+                                relationship.get("source")
+                        );
+
+                        writer.writeIndented(
+                                "Target Entity",
+                                relationship.get("target")
+                        );
+
+                        Object description =
+                                relationship.get(
+                                        "description");
+
+                        if (description != null
+                                && !String.valueOf(
+                                description).isBlank()) {
+
+                            writer.writeIndented(
+                                    "Description",
+                                    description
+                            );
+                        }
                     }
                 }
+
+            } else {
+
+                writer.writeLine(
+                        "No relationships were discovered."
+                );
             }
 
             writer.writeLine("");
 
-            writer.writeHeading("EVIDENCE");
+            // =========================================================
+            // 6. SUPPORTING EVIDENCE
+            // =========================================================
+
+            writer.writeHeading("6. SUPPORTING EVIDENCE");
 
             Object evidence =
                     report.get("evidence");
 
-            if (evidence instanceof List<?> evidenceList) {
+            if (evidence instanceof List<?> evidenceList
+                    && !evidenceList.isEmpty()) {
 
                 for (Object item : evidenceList) {
 
@@ -206,107 +321,321 @@ public class PdfExportService {
 
                         writer.writeLine(
                                 "Evidence "
-                                        + evidenceData.get(
-                                                "evidenceId")
+                                        + String.valueOf(
+                                        evidenceData.get(
+                                                "evidenceId"))
                                         + " | "
-                                        + evidenceData.get(
-                                                "evidenceType")
-                                        + " | "
-                                        + evidenceData.get(
-                                                "direction")
-                                        + " | "
-                                        + evidenceData.get(
-                                                "strength")
+                                        + String.valueOf(
+                                        evidenceData.get(
+                                                "evidenceType"))
+                                        + " | Direction: "
+                                        + String.valueOf(
+                                        evidenceData.get(
+                                                "direction"))
                         );
 
-                        writer.writeLine(
-                                "Source: "
-                                        + evidenceData.get(
-                                                "source")
+                        writer.writeIndented(
+                                "Source",
+                                evidenceData.get("source")
                         );
+
+                        writer.writeIndented(
+                                "Strength",
+                                evidenceData.get("strength")
+                        );
+
+                        writer.writeIndented(
+                                "Reliability",
+                                evidenceData.get("reliability")
+                        );
+
+                        Object description =
+                                evidenceData.get(
+                                        "description");
+
+                        if (description != null
+                                && !String.valueOf(
+                                description).isBlank()) {
+
+                            writer.writeIndented(
+                                    "Description",
+                                    description
+                            );
+                        }
+
+                        writer.writeLine("");
                     }
                 }
+
+            } else {
+
+                writer.writeLine(
+                        "No evidence records available."
+                );
             }
 
-            writer.writeLine("");
+            // =========================================================
+            // 7. ATTRIBUTION-CONFIDENCE ASSESSMENT
+            // =========================================================
 
-            writer.writeHeading("ATTRIBUTION CONFIDENCE");
+            writer.writeHeading(
+                    "7. ATTRIBUTION-CONFIDENCE ASSESSMENT"
+            );
 
             Object confidence =
                     report.get("confidence");
 
             if (confidence instanceof Map<?, ?> confidenceData) {
 
-                writer.writeLine(
-                        "Score: "
-                                + confidenceData.get("score")
+                writer.writeField(
+                        "Score",
+                        confidenceData.get("score")
                                 + " / 100"
                 );
 
-                writer.writeLine(
-                        "Risk Level: "
-                                + confidenceData.get(
-                                        "riskLevel")
+                writer.writeField(
+                        "Risk Level",
+                        confidenceData.get(
+                                "riskLevel")
+                );
+
+                writer.writeField(
+                        "Supporting Evidence",
+                        confidenceData.get(
+                                "supportingEvidenceCount")
+                );
+
+                writer.writeField(
+                        "Contradicting Evidence",
+                        confidenceData.get(
+                                "contradictingEvidenceCount")
+                );
+
+                writer.writeField(
+                        "Calculated At",
+                        confidenceData.get(
+                                "calculatedAt")
+                );
+
+                writer.writeLine("");
+
+                writer.writeLabel(
+                        "Explanation"
                 );
 
                 writer.writeLine(
-                        "Explanation: "
-                                + confidenceData.get(
-                                        "explanation")
+                        String.valueOf(
+                                confidenceData.get(
+                                        "explanation"))
+                );
+
+            } else {
+
+                writer.writeLine(
+                        "No confidence assessment available."
                 );
             }
 
             writer.writeLine("");
 
-            writer.writeHeading("ANALYST REVIEW");
+            // =========================================================
+            // 8. ANALYST REVIEW
+            // =========================================================
+
+            writer.writeHeading("8. ANALYST REVIEW");
 
             Object review =
                     report.get("review");
 
             if (review instanceof Map<?, ?> reviewData) {
 
-                writer.writeLine(
-                        "Status: "
-                                + reviewData.get("status")
+                writer.writeField(
+                        "Status",
+                        reviewData.get("status")
                 );
 
+                writer.writeField(
+                        "Note",
+                        reviewData.get("note")
+                );
+
+                writer.writeField(
+                        "Reviewed At",
+                        reviewData.get("reviewedAt")
+                );
+
+            } else {
+
                 writer.writeLine(
-                        "Note: "
-                                + reviewData.get("note")
+                        "No analyst review recorded."
                 );
             }
 
             writer.writeLine("");
 
-            writer.writeHeading("TIMELINE");
+            // =========================================================
+            // 9. TIMELINE
+            // =========================================================
+
+            writer.writeHeading("9. INVESTIGATION TIMELINE");
 
             Object timeline =
                     report.get("timeline");
 
-            if (timeline instanceof List<?> timelineList) {
+            if (timeline instanceof List<?> timelineList
+                    && !timelineList.isEmpty()) {
 
                 for (Object item : timelineList) {
 
                     if (item instanceof Map<?, ?> event) {
 
+                        /*
+                         * IMPORTANT:
+                         *
+                         * InvestigationService currently provides:
+                         * observedAt
+                         * evidenceType
+                         * source
+                         * description
+                         * strength
+                         * reliability
+                         * direction
+                         *
+                         * It does NOT provide timestamp/type.
+                         */
+
                         writer.writeLine(
                                 String.valueOf(
-                                        event.get("timestamp"))
+                                        event.get(
+                                                "observedAt"))
                                         + " | "
                                         + String.valueOf(
-                                        event.get("type"))
+                                        event.get(
+                                                "evidenceType"))
                         );
+
+                        writer.writeIndented(
+                                "Evidence ID",
+                                event.get("evidenceId")
+                        );
+
+                        writer.writeIndented(
+                                "Relationship ID",
+                                event.get("relationshipId")
+                        );
+
+                        writer.writeIndented(
+                                "Source",
+                                event.get("source")
+                        );
+
+                        writer.writeIndented(
+                                "Direction",
+                                event.get("direction")
+                        );
+
+                        writer.writeIndented(
+                                "Strength",
+                                event.get("strength")
+                        );
+
+                        writer.writeIndented(
+                                "Reliability",
+                                event.get("reliability")
+                        );
+
+                        Object description =
+                                event.get(
+                                        "description");
+
+                        if (description != null
+                                && !String.valueOf(
+                                description).isBlank()) {
+
+                            writer.writeIndented(
+                                    "Description",
+                                    description
+                            );
+                        }
+
+                        writer.writeLine("");
                     }
                 }
+
+            } else {
+
+                writer.writeLine(
+                        "No timeline events available."
+                );
+            }
+
+            // =========================================================
+            // 10. GRAPH SUMMARY
+            // =========================================================
+
+            writer.writeHeading("10. RELATIONSHIP GRAPH");
+
+            Object graph =
+                    report.get("graph");
+
+            if (graph instanceof Map<?, ?> graphData) {
+
+                Object nodes =
+                        graphData.get("nodes");
+
+                Object edges =
+                        graphData.get("edges");
+
+                int nodeCount =
+                        nodes instanceof List<?>
+                                ? ((List<?>) nodes).size()
+                                : 0;
+
+                int edgeCount =
+                        edges instanceof List<?>
+                                ? ((List<?>) edges).size()
+                                : 0;
+
+                writer.writeField(
+                        "Graph Nodes",
+                        nodeCount
+                );
+
+                writer.writeField(
+                        "Graph Edges",
+                        edgeCount
+                );
+
+            } else {
+
+                writer.writeLine(
+                        "No graph data available."
+                );
             }
 
             writer.writeLine("");
 
-            writer.writeHeading("DISCLAIMER");
+            // =========================================================
+            // 11. DISCLAIMER
+            // =========================================================
+
+            writer.writeHeading("11. DISCLAIMER");
 
             writer.writeLine(
                     String.valueOf(
                             report.get("disclaimer"))
+            );
+
+            writer.writeLine("");
+
+            writer.writeLine(
+                    "DAVIS is a prototype investigation-support "
+                            + "system. The attribution-confidence "
+                            + "score is an explainable assessment "
+                            + "derived from the controlled evidence "
+                            + "available to the prototype. It is not "
+                            + "identity proof and is not a calibrated "
+                            + "probability."
             );
 
             writer.save(outputStream);
@@ -314,6 +643,10 @@ public class PdfExportService {
             return outputStream.toByteArray();
         }
     }
+
+    // =================================================================
+    // PDF WRITER
+    // =================================================================
 
     private static class PdfWriter {
 
@@ -325,8 +658,9 @@ public class PdfExportService {
         private float yPosition;
 
         private static final float MARGIN = 50;
-        private static final float LINE_HEIGHT = 16;
+        private static final float LINE_HEIGHT = 14;
         private static final float FONT_SIZE = 9;
+        private static final float INDENT = 18;
 
         private final PDType1Font regularFont =
                 new PDType1Font(
@@ -338,16 +672,22 @@ public class PdfExportService {
                         Standard14Fonts.FontName.HELVETICA_BOLD
                 );
 
-        PdfWriter(PDDocument document) throws IOException {
+        PdfWriter(PDDocument document)
+                throws IOException {
 
             this.document = document;
 
             startNewPage();
         }
 
-        void writeTitle(String text) throws IOException {
+        // -------------------------------------------------------------
+        // TITLE
+        // -------------------------------------------------------------
 
-            ensureSpace(30);
+        void writeTitle(String text)
+                throws IOException {
+
+            ensureSpace(35);
 
             contentStream.setFont(
                     boldFont,
@@ -367,12 +707,17 @@ public class PdfExportService {
 
             contentStream.endText();
 
-            yPosition -= 30;
+            yPosition -= 28;
         }
 
-        void writeHeading(String text) throws IOException {
+        // -------------------------------------------------------------
+        // SECTION HEADING
+        // -------------------------------------------------------------
 
-            ensureSpace(25);
+        void writeHeading(String text)
+                throws IOException {
+
+            ensureSpace(30);
 
             contentStream.setFont(
                     boldFont,
@@ -395,7 +740,12 @@ public class PdfExportService {
             yPosition -= 20;
         }
 
-        void writeLine(String text) throws IOException {
+        // -------------------------------------------------------------
+        // NORMAL LINE
+        // -------------------------------------------------------------
+
+        void writeLine(String text)
+                throws IOException {
 
             List<String> lines =
                     wrapText(
@@ -427,6 +777,111 @@ public class PdfExportService {
             }
         }
 
+        // -------------------------------------------------------------
+        // FIELD
+        // -------------------------------------------------------------
+
+        void writeField(
+                String label,
+                Object value)
+                throws IOException {
+
+            ensureSpace(LINE_HEIGHT);
+
+            String text =
+                    label
+                            + ": "
+                            + String.valueOf(
+                            value == null
+                                    ? "-"
+                                    : value
+                    );
+
+            writeLine(text);
+        }
+
+        // -------------------------------------------------------------
+        // INDENTED FIELD
+        // -------------------------------------------------------------
+
+        void writeIndented(
+                String label,
+                Object value)
+                throws IOException {
+
+            String text =
+                    label
+                            + ": "
+                            + String.valueOf(
+                            value == null
+                                    ? "-"
+                                    : value
+                    );
+
+            List<String> lines =
+                    wrapText(
+                            sanitize(text),
+                            95
+                    );
+
+            for (String line : lines) {
+
+                ensureSpace(LINE_HEIGHT);
+
+                contentStream.setFont(
+                        regularFont,
+                        FONT_SIZE
+                );
+
+                contentStream.beginText();
+
+                contentStream.newLineAtOffset(
+                        MARGIN + INDENT,
+                        yPosition
+                );
+
+                contentStream.showText(line);
+
+                contentStream.endText();
+
+                yPosition -= LINE_HEIGHT;
+            }
+        }
+
+        // -------------------------------------------------------------
+        // LABEL
+        // -------------------------------------------------------------
+
+        void writeLabel(String text)
+                throws IOException {
+
+            ensureSpace(LINE_HEIGHT);
+
+            contentStream.setFont(
+                    boldFont,
+                    FONT_SIZE
+            );
+
+            contentStream.beginText();
+
+            contentStream.newLineAtOffset(
+                    MARGIN,
+                    yPosition
+            );
+
+            contentStream.showText(
+                    sanitize(text)
+            );
+
+            contentStream.endText();
+
+            yPosition -= LINE_HEIGHT;
+        }
+
+        // -------------------------------------------------------------
+        // SAVE
+        // -------------------------------------------------------------
+
         void save(
                 ByteArrayOutputStream outputStream)
                 throws IOException {
@@ -436,12 +891,18 @@ public class PdfExportService {
             document.save(outputStream);
         }
 
+        // -------------------------------------------------------------
+        // PAGE MANAGEMENT
+        // -------------------------------------------------------------
+
         private void ensureSpace(
                 float requiredSpace)
                 throws IOException {
 
             if (yPosition - requiredSpace < MARGIN) {
+
                 contentStream.close();
+
                 startNewPage();
             }
         }
@@ -449,9 +910,10 @@ public class PdfExportService {
         private void startNewPage()
                 throws IOException {
 
-            page = new PDPage(
-                    PDRectangle.A4
-            );
+            page =
+                    new PDPage(
+                            PDRectangle.A4
+                    );
 
             document.addPage(page);
 
@@ -462,20 +924,27 @@ public class PdfExportService {
                     );
 
             yPosition =
-                    page.getMediaBox().getHeight()
+                    page.getMediaBox()
+                            .getHeight()
                             - MARGIN;
         }
+
+        // -------------------------------------------------------------
+        // TEXT WRAPPING
+        // -------------------------------------------------------------
 
         private List<String> wrapText(
                 String text,
                 int maxCharacters) {
 
-            if (text == null || text.isBlank()) {
+            if (text == null
+                    || text.isBlank()) {
+
                 return List.of("");
             }
 
-            java.util.ArrayList<String> result =
-                    new java.util.ArrayList<>();
+            ArrayList<String> result =
+                    new ArrayList<>();
 
             String[] words =
                     text.split("\\s+");
@@ -490,12 +959,15 @@ public class PdfExportService {
                         + 1
                         > maxCharacters) {
 
-                    result.add(
-                            current.toString()
-                    );
+                    if (!current.isEmpty()) {
 
-                    current =
-                            new StringBuilder();
+                        result.add(
+                                current.toString()
+                        );
+
+                        current =
+                                new StringBuilder();
+                    }
                 }
 
                 if (!current.isEmpty()) {
@@ -506,6 +978,7 @@ public class PdfExportService {
             }
 
             if (!current.isEmpty()) {
+
                 result.add(
                         current.toString()
                 );
@@ -514,7 +987,12 @@ public class PdfExportService {
             return result;
         }
 
-        private String sanitize(String text) {
+        // -------------------------------------------------------------
+        // SANITIZE
+        // -------------------------------------------------------------
+
+        private String sanitize(
+                String text) {
 
             if (text == null) {
                 return "";

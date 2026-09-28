@@ -1,0 +1,13 @@
+target/
+*.class
+.env
+.idea/
+.vscode/
+node_modules/
+
+# Generated test/export files
+CASE-*-EXPORT.csv
+CASE-*-REPORT.pdf
+CASE-*-CURRENT.pdf
+CASE-*-FIXED.pdf
+DAVIS_Case_1_Report.csv
