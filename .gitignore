@@ -11,3 +11,20 @@ CASE-*-REPORT.pdf
 CASE-*-CURRENT.pdf
 CASE-*-FIXED.pdf
 DAVIS_Case_1_Report.csv
+
+# Python generated files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Local AIML test/debug artifacts
+aiml_analyzer.txt
+aiml_diff.txt
+aiml_extractor.txt
+aiml_service_branch.txt
+aiml_service_review.txt
+aiml_test_input.json
+aiml_test_output.json
+
+# Local database/session files
+*.session.sql

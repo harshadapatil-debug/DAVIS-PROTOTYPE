@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -33,6 +34,7 @@ public class ControlledIntelligenceService {
     private final RelationshipRepository relationshipRepository;
     private final EvidenceRepository evidenceRepository;
     private final ObjectMapper objectMapper;
+    private final AimlClient aimlClient;
 
     /*
      * JSON uses timestamps like:
@@ -51,7 +53,8 @@ public class ControlledIntelligenceService {
             EntityRepository entityRepository,
             RelationshipRepository relationshipRepository,
             EvidenceRepository evidenceRepository,
-            ObjectMapper objectMapper
+            ObjectMapper objectMapper,
+            AimlClient aimlClient
     ) {
         this.caseRepository = caseRepository;
         this.indicatorRepository = indicatorRepository;
@@ -59,6 +62,7 @@ public class ControlledIntelligenceService {
         this.relationshipRepository = relationshipRepository;
         this.evidenceRepository = evidenceRepository;
         this.objectMapper = objectMapper;
+        this.aimlClient = aimlClient;
     }
 
 
@@ -66,6 +70,20 @@ public class ControlledIntelligenceService {
      * ============================================================
      * MAIN CONTROLLED INTELLIGENCE ANALYSIS
      * ============================================================
+     *
+     * Flow:
+     *
+     * Controlled Intelligence JSON
+     *          ↓
+     * Build AIML input
+     *          ↓
+     * AIML Service
+     *          ↓
+     * Entities
+     * Relationships
+     * Evidence
+     *          ↓
+     * Persist into MySQL
      */
     @Transactional
     public Map<String, Object> analyzeCase(Long caseId) {
@@ -181,20 +199,15 @@ public class ControlledIntelligenceService {
 
             /*
              * ----------------------------------------------------
-             * Counters
+             * STEP 5 — Build AIML intelligence input
              * ----------------------------------------------------
              */
+            List<Map<String, Object>> intelligence =
+                    new ArrayList<>();
+
             int matchedRecords = 0;
-            int newEntities = 0;
-            int newRelationships = 0;
-            int newEvidence = 0;
 
 
-            /*
-             * ----------------------------------------------------
-             * STEP 5 — Process controlled records
-             * ----------------------------------------------------
-             */
             for (Object recordObject : records) {
 
                 /*
@@ -231,6 +244,7 @@ public class ControlledIntelligenceService {
                     continue;
                 }
 
+
                 if (!equalsIgnoreCase(
                         indicator.getIndicatorValue(),
                         recordIndicatorValue
@@ -240,15 +254,14 @@ public class ControlledIntelligenceService {
 
 
                 /*
-                 * This controlled record belongs to the
-                 * current investigation.
+                 * This record belongs to the current investigation.
                  */
                 matchedRecords++;
 
 
                 /*
                  * ------------------------------------------------
-                 * STEP 6 — SOURCE ENTITY
+                 * Extract entity information
                  * ------------------------------------------------
                  */
                 Map<?, ?> sourceEntityData =
@@ -256,53 +269,373 @@ public class ControlledIntelligenceService {
                                 record.get("sourceEntity")
                         );
 
-                EntityResult sourceResult =
-                        findOrCreateEntity(
-                                caseEntity,
-                                sourceEntityData
-                        );
-
-                Entity sourceEntity =
-                        sourceResult.entity();
-
-                if (sourceResult.created()) {
-                    newEntities++;
-                }
-
-
-                /*
-                 * ------------------------------------------------
-                 * STEP 7 — TARGET ENTITY
-                 * ------------------------------------------------
-                 */
                 Map<?, ?> targetEntityData =
                         mapValue(
                                 record.get("targetEntity")
                         );
 
-                EntityResult targetResult =
-                        findOrCreateEntity(
-                                caseEntity,
-                                targetEntityData
+                Map<?, ?> evidenceData =
+                        mapValue(
+                                record.get("evidence")
                         );
 
-                Entity targetEntity =
-                        targetResult.entity();
 
-                if (targetResult.created()) {
-                    newEntities++;
-                }
+                String sourceType =
+                        stringValue(
+                                sourceEntityData.get(
+                                        "entityType"
+                                )
+                        );
+
+                String sourceValue =
+                        stringValue(
+                                sourceEntityData.get(
+                                        "entityValue"
+                                )
+                        );
+
+
+                String targetType =
+                        stringValue(
+                                targetEntityData.get(
+                                        "entityType"
+                                )
+                        );
+
+                String targetValue =
+                        stringValue(
+                                targetEntityData.get(
+                                        "entityValue"
+                                )
+                        );
+
+
+                String evidenceDescription =
+                        stringValue(
+                                evidenceData.get(
+                                        "description"
+                                )
+                        );
+
+
+                String evidenceSource =
+                        stringValue(
+                                evidenceData.get(
+                                        "source"
+                                )
+                        );
+
+
+                String observedAt =
+                        stringValue(
+                                evidenceData.get(
+                                        "observedAt"
+                                )
+                        );
+
+
+                String reliability =
+                        stringValue(
+                                evidenceData.get(
+                                        "reliability"
+                                )
+                        );
 
 
                 /*
                  * ------------------------------------------------
-                 * STEP 8 — RELATIONSHIP
+                 * Build natural-language intelligence
+                 * ------------------------------------------------
+                 *
+                 * IMPORTANT:
+                 *
+                 * We intentionally DO NOT send:
+                 *
+                 * relationshipType
+                 * assessment
+                 *
+                 * to AIML.
+                 *
+                 * Otherwise AIML would simply be given the
+                 * answer instead of detecting the relationship.
+                 */
+                String text =
+                        "Source entity: "
+                                + sourceType
+                                + " "
+                                + sourceValue
+                                + ". Target entity: "
+                                + targetType
+                                + " "
+                                + targetValue
+                                + ". Evidence: "
+                                + evidenceDescription;
+
+
+                /*
+                 * ------------------------------------------------
+                 * Build AIML intelligence record
                  * ------------------------------------------------
                  */
-                Map<?, ?> relationshipData =
-                        mapValue(
-                                record.get("relationship")
+                Map<String, Object> intelligenceRecord =
+                        new LinkedHashMap<>();
+
+                intelligenceRecord.put(
+                        "source",
+                        evidenceSource
+                );
+
+                intelligenceRecord.put(
+                        "observedAt",
+                        observedAt
+                );
+
+                intelligenceRecord.put(
+                        "reliability",
+                        reliability
+                );
+
+                intelligenceRecord.put(
+                        "text",
+                        text
+                );
+
+
+                intelligence.add(
+                        intelligenceRecord
+                );
+            }
+
+
+            /*
+             * ----------------------------------------------------
+             * STEP 6 — Build AIML request
+             * ----------------------------------------------------
+             */
+            Map<String, Object> aimlPayload =
+                    new LinkedHashMap<>();
+
+            aimlPayload.put(
+                    "caseId",
+                    caseId
+            );
+
+            aimlPayload.put(
+                    "indicatorType",
+                    indicator.getIndicatorType()
+            );
+
+            aimlPayload.put(
+                    "indicatorValue",
+                    indicator.getIndicatorValue()
+            );
+
+            aimlPayload.put(
+                    "intelligence",
+                    intelligence
+            );
+
+
+            /*
+             * ----------------------------------------------------
+             * STEP 7 — Call AIML service
+             * ----------------------------------------------------
+             */
+            Map<String, Object> aimlResult =
+                    aimlClient.analyze(
+                            aimlPayload
+                    );
+
+
+            /*
+             * ----------------------------------------------------
+             * STEP 8 — Read AIML entities
+             * ----------------------------------------------------
+             */
+            Object aimlEntitiesObject =
+                    aimlResult.get("entities");
+
+
+            if (!(aimlEntitiesObject instanceof List<?>)) {
+
+                throw new RuntimeException(
+                        "AIML response does not contain "
+                                + "a valid entities array."
+                );
+            }
+
+
+            List<?> aimlEntities =
+                    (List<?>) aimlEntitiesObject;
+
+
+            /*
+             * AIML entity ID
+             *        ↓
+             * Java Entity object
+             *
+             * AIML IDs are logical IDs.
+             * Database IDs are generated separately.
+             */
+            Map<String, Entity> entityMapping =
+                    new HashMap<>();
+
+
+            int newEntities = 0;
+
+
+            /*
+             * ----------------------------------------------------
+             * Persist AIML entities
+             * ----------------------------------------------------
+             */
+            for (Object entityObject : aimlEntities) {
+
+                if (!(entityObject instanceof Map<?, ?>)) {
+                    continue;
+                }
+
+
+                Map<?, ?> entityData =
+                        (Map<?, ?>) entityObject;
+
+
+                Object aimlEntityId =
+                        entityData.get("entityId");
+
+
+                if (aimlEntityId == null) {
+                    continue;
+                }
+
+
+                EntityResult entityResult =
+                        findOrCreateEntity(
+                                caseEntity,
+                                entityData
                         );
+
+
+                Entity entity =
+                        entityResult.entity();
+
+
+                if (entityResult.created()) {
+                    newEntities++;
+                }
+
+
+                entityMapping.put(
+                        String.valueOf(
+                                aimlEntityId
+                        ),
+                        entity
+                );
+            }
+
+
+            /*
+             * ----------------------------------------------------
+             * STEP 9 — Read AIML relationships
+             * ----------------------------------------------------
+             */
+            Object aimlRelationshipsObject =
+                    aimlResult.get(
+                            "candidateRelationships"
+                    );
+
+
+            if (!(aimlRelationshipsObject instanceof List<?>)) {
+
+                throw new RuntimeException(
+                        "AIML response does not contain "
+                                + "a valid candidateRelationships array."
+                );
+            }
+
+
+            List<?> aimlRelationships =
+                    (List<?>) aimlRelationshipsObject;
+
+
+            int newRelationships = 0;
+
+
+            /*
+             * AIML relationship ID
+             *        ↓
+             * Java Relationship object
+             */
+            Map<String, Relationship> relationshipMapping =
+                    new HashMap<>();
+
+
+            /*
+             * ----------------------------------------------------
+             * Persist AIML relationships
+             * ----------------------------------------------------
+             */
+            for (Object relationshipObject :
+                    aimlRelationships) {
+
+                if (!(relationshipObject instanceof Map<?, ?>)) {
+                    continue;
+                }
+
+
+                Map<?, ?> relationshipData =
+                        (Map<?, ?>) relationshipObject;
+
+
+                String aimlRelationshipId =
+                        stringValue(
+                                relationshipData.get(
+                                        "relationshipId"
+                                )
+                        );
+
+
+                String sourceEntityId =
+                        stringValue(
+                                relationshipData.get(
+                                        "sourceEntityId"
+                                )
+                        );
+
+
+                String targetEntityId =
+                        stringValue(
+                                relationshipData.get(
+                                        "targetEntityId"
+                                )
+                        );
+
+
+                Entity sourceEntity =
+                        entityMapping.get(
+                                sourceEntityId
+                        );
+
+
+                Entity targetEntity =
+                        entityMapping.get(
+                                targetEntityId
+                        );
+
+
+                if (sourceEntity == null
+                        || targetEntity == null) {
+
+                    throw new RuntimeException(
+                            "AIML relationship references "
+                                    + "unknown entity. "
+                                    + "source="
+                                    + sourceEntityId
+                                    + ", target="
+                                    + targetEntityId
+                    );
+                }
+
 
                 String relationshipType =
                         stringValue(
@@ -311,12 +644,14 @@ public class ControlledIntelligenceService {
                                 )
                         );
 
+
                 String relationshipDescription =
                         stringValue(
                                 relationshipData.get(
                                         "description"
                                 )
                         );
+
 
                 String relationshipAssessment =
                         stringValue(
@@ -336,23 +671,90 @@ public class ControlledIntelligenceService {
                                 relationshipAssessment
                         );
 
+
                 Relationship relationship =
                         relationshipResult.relationship();
+
 
                 if (relationshipResult.created()) {
                     newRelationships++;
                 }
 
 
-                /*
-                 * ------------------------------------------------
-                 * STEP 9 — EVIDENCE DATA
-                 * ------------------------------------------------
-                 */
+                relationshipMapping.put(
+                        aimlRelationshipId,
+                        relationship
+                );
+            }
+
+
+            /*
+             * ----------------------------------------------------
+             * STEP 10 — Read AIML evidence
+             * ----------------------------------------------------
+             */
+            Object aimlEvidenceObject =
+                    aimlResult.get(
+                            "evidence"
+                    );
+
+
+            if (!(aimlEvidenceObject instanceof List<?>)) {
+
+                throw new RuntimeException(
+                        "AIML response does not contain "
+                                + "a valid evidence array."
+                );
+            }
+
+
+            List<?> aimlEvidence =
+                    (List<?>) aimlEvidenceObject;
+
+
+            int newEvidence = 0;
+
+
+            /*
+             * ----------------------------------------------------
+             * Persist AIML evidence
+             * ----------------------------------------------------
+             */
+            for (Object evidenceObject :
+                    aimlEvidence) {
+
+                if (!(evidenceObject instanceof Map<?, ?>)) {
+                    continue;
+                }
+
+
                 Map<?, ?> evidenceData =
-                        mapValue(
-                                record.get("evidence")
+                        (Map<?, ?>) evidenceObject;
+
+
+                String aimlRelationshipId =
+                        stringValue(
+                                evidenceData.get(
+                                        "relationshipId"
+                                )
                         );
+
+
+                Relationship relationship =
+                        relationshipMapping.get(
+                                aimlRelationshipId
+                        );
+
+
+                if (relationship == null) {
+
+                    throw new RuntimeException(
+                            "AIML evidence references "
+                                    + "unknown relationship: "
+                                    + aimlRelationshipId
+                    );
+                }
+
 
                 String evidenceType =
                         stringValue(
@@ -361,12 +763,14 @@ public class ControlledIntelligenceService {
                                 )
                         );
 
+
                 String source =
                         stringValue(
                                 evidenceData.get(
                                         "source"
                                 )
                         );
+
 
                 String description =
                         stringValue(
@@ -375,12 +779,14 @@ public class ControlledIntelligenceService {
                                 )
                         );
 
+
                 String strength =
                         stringValue(
                                 evidenceData.get(
                                         "strength"
                                 )
                         );
+
 
                 String reliability =
                         stringValue(
@@ -389,6 +795,7 @@ public class ControlledIntelligenceService {
                                 )
                         );
 
+
                 String direction =
                         stringValue(
                                 evidenceData.get(
@@ -396,12 +803,14 @@ public class ControlledIntelligenceService {
                                 )
                         );
 
+
                 String independenceGroup =
                         stringValue(
                                 evidenceData.get(
                                         "independenceGroup"
                                 )
                         );
+
 
                 String observedAtText =
                         stringValue(
@@ -411,10 +820,7 @@ public class ControlledIntelligenceService {
                         );
 
 
-                /*
-                 * Parse timestamp.
-                 */
-                final LocalDateTime observedAt =
+                LocalDateTime observedAt =
                         parseObservedAt(
                                 observedAtText
                         );
@@ -466,45 +872,56 @@ public class ControlledIntelligenceService {
                     Evidence evidence =
                             new Evidence();
 
+
                     evidence.setRelationship(
                             relationship
                     );
+
 
                     evidence.setEvidenceType(
                             evidenceType
                     );
 
+
                     evidence.setSource(
                             source
                     );
+
 
                     evidence.setDescription(
                             description
                     );
 
+
                     evidence.setStrength(
                             strength
                     );
+
 
                     evidence.setReliability(
                             reliability
                     );
 
+
                     evidence.setDirection(
                             direction
                     );
+
 
                     evidence.setIndependenceGroup(
                             independenceGroup
                     );
 
+
                     evidence.setObservedAt(
                             observedAt
                     );
 
+
                     evidenceRepository.save(
                             evidence
                     );
+
 
                     newEvidence++;
                 }
@@ -513,51 +930,60 @@ public class ControlledIntelligenceService {
 
             /*
              * ----------------------------------------------------
-             * STEP 10 — Build analysis response
+             * STEP 11 — Build analysis response
              * ----------------------------------------------------
              */
             Map<String, Object> result =
                     new LinkedHashMap<>();
+
 
             result.put(
                     "caseId",
                     caseId
             );
 
+
             result.put(
                     "indicatorType",
                     indicator.getIndicatorType()
             );
+
 
             result.put(
                     "indicatorValue",
                     indicator.getIndicatorValue()
             );
 
+
             result.put(
                     "matchedRecords",
                     matchedRecords
             );
+
 
             result.put(
                     "newEntities",
                     newEntities
             );
 
+
             result.put(
                     "newRelationships",
                     newRelationships
             );
+
 
             result.put(
                     "newEvidence",
                     newEvidence
             );
 
+
             result.put(
                     "message",
-                    "Controlled intelligence analysis completed."
+                    "Controlled intelligence analysis completed through AIML."
             );
+
 
             return result;
 
@@ -587,26 +1013,27 @@ public class ControlledIntelligenceService {
                         entityData.get("entityType")
                 );
 
+
         String entityValue =
                 stringValue(
                         entityData.get("entityValue")
                 );
+
 
         String description =
                 stringValue(
                         entityData.get("description")
                 );
 
+
         /*
-         * NEW:
-         * Read discoveryConfidence from the controlled dataset.
-         *
-         * Example:
-         * "discoveryConfidence": 0.92
+         * Read discoveryConfidence.
          */
         BigDecimal discoveryConfidence =
                 decimalValue(
-                        entityData.get("discoveryConfidence")
+                        entityData.get(
+                                "discoveryConfidence"
+                        )
                 );
 
 
@@ -646,23 +1073,23 @@ public class ControlledIntelligenceService {
          * --------------------------------------------------------
          * Existing entity
          * --------------------------------------------------------
-         *
-         * If an older run created the entity with the default
-         * value 0.0000, repair it using the confidence from JSON.
-         *
-         * We do NOT overwrite an already meaningful confidence.
          */
         if (existing != null) {
 
             BigDecimal existingConfidence =
                     existing.getDiscoveryConfidence();
 
+
             boolean missingConfidence =
                     existingConfidence == null
                             || existingConfidence.compareTo(
-                                    BigDecimal.ZERO
-                            ) == 0;
+                            BigDecimal.ZERO
+                    ) == 0;
 
+
+            /*
+             * Repair missing discovery confidence.
+             */
             if (missingConfidence
                     && discoveryConfidence != null) {
 
@@ -670,10 +1097,12 @@ public class ControlledIntelligenceService {
                         discoveryConfidence
                 );
 
+
                 entityRepository.save(
                         existing
                 );
             }
+
 
             return new EntityResult(
                     existing,
@@ -690,26 +1119,27 @@ public class ControlledIntelligenceService {
         Entity newEntity =
                 new Entity();
 
+
         newEntity.setCaseEntity(
                 caseEntity
         );
+
 
         newEntity.setEntityType(
                 entityType
         );
 
+
         newEntity.setEntityValue(
                 entityValue
         );
+
 
         newEntity.setDescription(
                 description
         );
 
-        /*
-         * NEW:
-         * Persist discovery confidence from JSON.
-         */
+
         if (discoveryConfidence != null) {
 
             newEntity.setDiscoveryConfidence(
@@ -722,6 +1152,7 @@ public class ControlledIntelligenceService {
                 entityRepository.save(
                         newEntity
                 );
+
 
         return new EntityResult(
                 savedEntity,
@@ -809,25 +1240,31 @@ public class ControlledIntelligenceService {
         Relationship newRelationship =
                 new Relationship();
 
+
         newRelationship.setCaseEntity(
                 caseEntity
         );
+
 
         newRelationship.setSourceEntity(
                 sourceEntity
         );
 
+
         newRelationship.setTargetEntity(
                 targetEntity
         );
+
 
         newRelationship.setRelationshipType(
                 relationshipType
         );
 
+
         newRelationship.setDescription(
                 relationshipDescription
         );
+
 
         newRelationship.setAssessment(
                 relationshipAssessment
@@ -884,6 +1321,7 @@ public class ControlledIntelligenceService {
             return null;
         }
 
+
         return LocalDateTime.parse(
                 value,
                 DATE_TIME_FORMATTER
@@ -895,14 +1333,6 @@ public class ControlledIntelligenceService {
      * ============================================================
      * PARSE DECIMAL VALUE
      * ============================================================
-     *
-     * Handles values coming from Jackson as:
-     *
-     * 0.92
-     * 0.8500
-     * "0.92"
-     *
-     * and converts them safely to BigDecimal.
      */
     private BigDecimal decimalValue(
             Object value
@@ -911,6 +1341,7 @@ public class ControlledIntelligenceService {
         if (value == null) {
             return null;
         }
+
 
         try {
 
@@ -942,6 +1373,7 @@ public class ControlledIntelligenceService {
             return null;
         }
 
+
         return String.valueOf(value);
     }
 
@@ -958,6 +1390,7 @@ public class ControlledIntelligenceService {
         if (value instanceof Map<?, ?> map) {
             return map;
         }
+
 
         return new HashMap<>();
     }
@@ -977,11 +1410,15 @@ public class ControlledIntelligenceService {
             return true;
         }
 
+
         if (first == null || second == null) {
             return false;
         }
 
-        return first.equalsIgnoreCase(second);
+
+        return first.equalsIgnoreCase(
+                second
+        );
     }
 
 
@@ -999,9 +1436,11 @@ public class ControlledIntelligenceService {
             return true;
         }
 
+
         if (first == null || second == null) {
             return false;
         }
+
 
         return first.equals(second);
     }

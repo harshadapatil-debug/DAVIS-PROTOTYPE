@@ -1,0 +1,3 @@
+# Runtime: Python 3.9+ standard library only (no third-party packages required).
+# Tests use the standard-library unittest runner; pytest (optional) also works.
+# (optional) pytest>=7.0 for running tests with pytest
