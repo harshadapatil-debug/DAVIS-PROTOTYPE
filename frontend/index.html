@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="DAVIS — Digital attribution and verification investigation console" />
+  <title>DAVIS — Investigation Console</title>
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-left">
+          <div>
+            <div class="eyebrow">DIGITAL ATTRIBUTION &amp; VERIFICATION INTELLIGENCE SYSTEM</div>
+            <div class="page-title" id="page-title">Cases</div>
+          </div>
+        </div>
+        <div class="connection" id="connection-status" aria-live="polite">
+          <span class="connection-dot" aria-hidden="true"></span>
+          <span class="connection-text">Checking API</span>
+        </div>
+      </header>
+
+      <section class="view" id="home-view" aria-labelledby="cases-heading">
+        <div class="view-header">
+          <div>
+            <div class="eyebrow">CASE REGISTER</div>
+            <h1 id="cases-heading">Cases</h1>
+            <p>Open an existing investigation or create a new case.</p>
+          </div>
+          <button class="btn primary" id="create-case-open" type="button">Create case</button>
+        </div>
+
+        <div class="inline-alert" id="home-alert" hidden></div>
+
+        <div class="table-wrap">
+          <table class="data-table" aria-label="Cases">
+            <thead>
+              <tr>
+                <th>Case</th>
+                <th>ID</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Last scan</th>
+                <th><span class="sr-only">Action</span></th>
+              </tr>
+            </thead>
+            <tbody id="cases-body">
+              <tr><td colspan="6" class="state-cell">Loading cases…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="view" id="case-view" hidden>
+        <div class="case-header">
+          <div class="case-heading">
+            <button class="text-button" id="back-to-cases" type="button">← Cases</button>
+            <div class="case-heading-main">
+              <div class="eyebrow">ACTIVE INVESTIGATION</div>
+              <h1 id="case-title">—</h1>
+              <div class="case-meta" id="case-meta"></div>
+            </div>
+          </div>
+          <div class="case-actions">
+            <button class="btn secondary" id="add-indicator-open" type="button">Add indicator</button>
+            <button class="btn primary" id="run-investigation" type="button">Run investigation</button>
+          </div>
+        </div>
+
+        <div class="inline-alert" id="case-alert" hidden></div>
+        <div class="loading-bar" id="investigation-loading" hidden><span></span></div>
+
+        <div class="case-overview-strip" id="case-overview-strip"></div>
+
+        <nav class="tabs" aria-label="Investigation views" id="case-tabs">
+          <button type="button" class="tab active" data-tab="overview">Overview</button>
+          <button type="button" class="tab" data-tab="entities">Entities</button>
+          <button type="button" class="tab" data-tab="relationships">Relationships / Graph</button>
+          <button type="button" class="tab" data-tab="evidence">Evidence</button>
+          <button type="button" class="tab" data-tab="assessment">Assessment</button>
+          <button type="button" class="tab" data-tab="review">Review</button>
+          <button type="button" class="tab" data-tab="report">Report / Export</button>
+        </nav>
+
+        <div class="tab-panels">
+          <section class="tab-panel active" data-panel="overview">
+            <div id="overview-content"></div>
+          </section>
+          <section class="tab-panel" data-panel="entities">
+            <div id="entities-content"></div>
+          </section>
+          <section class="tab-panel" data-panel="relationships">
+            <div id="relationships-content"></div>
+          </section>
+          <section class="tab-panel" data-panel="evidence">
+            <div id="evidence-content"></div>
+          </section>
+          <section class="tab-panel" data-panel="assessment">
+            <div id="assessment-content"></div>
+          </section>
+          <section class="tab-panel" data-panel="review">
+            <div id="review-content"></div>
+          </section>
+          <section class="tab-panel" data-panel="report">
+            <div id="report-content"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog class="modal" id="case-modal">
+    <form method="dialog" id="case-form" class="modal-form">
+      <div class="modal-header">
+        <div>
+          <div class="eyebrow">NEW CASE</div>
+          <h2>Create investigation case</h2>
+        </div>
+        <button class="icon-button" value="cancel" type="submit" aria-label="Close">×</button>
+      </div>
+      <div class="form-grid">
+        <label>
+          <span>Case name</span>
+          <input name="caseName" required maxlength="150" autocomplete="off" />
+        </label>
+        <label>
+          <span>Case type</span>
+          <select name="caseType" required>
+            <option value="DARK_WEB_INTELLIGENCE">DARK_WEB_INTELLIGENCE</option>
+          </select>
+        </label>
+        <label>
+          <span>Category</span>
+          <select name="category" required>
+            <option value="THREAT_ACTOR_ATTRIBUTION">THREAT_ACTOR_ATTRIBUTION</option>
+          </select>
+        </label>
+        <label class="full-span">
+          <span>Description</span>
+          <textarea name="description" rows="4"></textarea>
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button class="btn secondary" value="cancel" type="submit">Cancel</button>
+        <button class="btn primary" id="create-case-submit" value="default" type="submit">Create case</button>
+      </div>
+      <div class="form-error" id="case-form-error" role="alert"></div>
+    </form>
+  </dialog>
+
+  <dialog class="modal" id="indicator-modal">
+    <form method="dialog" id="indicator-form" class="modal-form">
+      <div class="modal-header">
+        <div>
+          <div class="eyebrow">KNOWN INDICATOR</div>
+          <h2>Add investigation starting clue</h2>
+        </div>
+        <button class="icon-button" value="cancel" type="submit" aria-label="Close">×</button>
+      </div>
+      <div class="form-grid">
+        <label>
+          <span>Indicator type</span>
+          <select name="indicatorType" required>
+            <option value="USERNAME">USERNAME</option>
+            <option value="EMAIL">EMAIL</option>
+            <option value="PGP_KEY">PGP_KEY</option>
+            <option value="WALLET">WALLET</option>
+            <option value="DOMAIN">DOMAIN</option>
+            <option value="IP_ADDRESS">IP_ADDRESS</option>
+            <option value="ONION_SERVICE">ONION_SERVICE</option>
+            <option value="OTHER">OTHER</option>
+          </select>
+        </label>
+        <label>
+          <span>Indicator value</span>
+          <input name="indicatorValue" required maxlength="500" autocomplete="off" />
+        </label>
+        <label class="full-span">
+          <span>Description</span>
+          <textarea name="description" rows="3"></textarea>
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button class="btn secondary" value="cancel" type="submit">Cancel</button>
+        <button class="btn primary" id="add-indicator-submit" value="default" type="submit">Add indicator</button>
+      </div>
+      <div class="form-error" id="indicator-form-error" role="alert"></div>
+    </form>
+  </dialog>
+
+  <script>
+    window.DAVIS_API_BASE = window.DAVIS_API_BASE || 'http://localhost:8080';
+  </script>
+  <script src="./js/api.js"></script>
+  <script src="./js/graph.js"></script>
+  <script src="./js/confidence.js"></script>
+  <script src="./js/stress.js"></script>
+  <script src="./js/report.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>
