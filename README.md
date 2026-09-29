@@ -1,74 +1,165 @@
-# DAVIS — Dark-Web Threat Actor Attribution Investigation System
+DAVIS — Dark-web Actor Verification and Intelligence System
 
-DAVIS is a prototype investigation platform for threat-actor attribution
-using observable digital evidence.
+Overview
 
-The prototype starts from a known indicator, analyzes controlled/synthetic
-intelligence, extracts entities and relationships, links them through
-evidence, generates an explainable attribution-confidence assessment,
-allows investigator review and stress testing, and produces a final report.
+DAVIS is a digital investigation prototype designed to help investigators correlate information related to suspected threat actors across dark/restricted-web and public-web sources.
 
----
+Instead of analysing isolated indicators separately, DAVIS brings together multiple evidence types such as usernames, email addresses, domains, wallet addresses, textual information, relationships, behavioural patterns, and temporal information into a single investigation workflow.
 
-## IMPORTANT
+The system helps an analyst move from an initial indicator to a connected evidence view, attribution-support score, explanation, stress testing, and an auditable investigation report.
 
-This is a PROTOTYPE using CONTROLLED / SYNTHETIC DATA.
-
-DAVIS does NOT claim to:
-
-- break Tor
-- prove a person's real-world identity
-- provide calibrated identity probabilities
-- perform unrestricted live dark-web crawling
-
-The system produces an:
-
-"Attribution-confidence assessment for investigator review."
+«Prototype Note: The current demonstration uses controlled/synthetic data to showcase the investigation workflow. It does not perform real-world deanonymization or identify real individuals.»
 
 ---
 
-# PROJECT FLOW
+Problem
 
-CASE
-↓
-KNOWN INDICATOR
-↓
-CONTROLLED INTELLIGENCE
-↓
-AI/ML ANALYSIS
-↓
-ENTITIES
-↓
-RELATIONSHIPS
-↓
-EVIDENCE
-↓
-GRAPH + TIMELINE
-↓
-ATTRIBUTION-CONFIDENCE SCORE
-↓
-ANALYST REVIEW
-↓
-STRESS TEST
-↓
-FINAL REPORT
-↓
-PDF / CSV / JSON
+Digital investigations often involve fragmented information spread across multiple sources and evidence types. Manually connecting these indicators can make investigations time-consuming and difficult to audit.
+
+DAVIS addresses this by providing a unified workflow for:
+
+- Indicator-based investigation
+- Entity and relationship extraction
+- Evidence correlation
+- Graph-based investigation
+- Timeline analysis
+- Attribution-support analysis
+- Explainable scoring
+- Analyst review and stress testing
+- Evidence-backed report generation
 
 ---
 
-# PROJECT STRUCTURE
+Key Features
+
+1. Indicator-Based Investigation
+
+Start an investigation using available indicators such as:
+
+- Username
+- Email
+- Domain
+- Wallet address
+- Textual indicators
+
+2. Entity & Relationship Correlation
+
+Extract entities and connect related evidence to identify meaningful relationships between indicators, accounts, domains and other entities.
+
+3. Investigation Graph
+
+Represent discovered entities and their relationships as an interactive graph to help analysts understand connections.
+
+4. Timeline Analysis
+
+Organise relevant events chronologically to help identify behavioural and temporal relationships.
+
+5. Attribution-Support Score
+
+DAVIS produces a score that represents the level of supporting evidence available for an attribution hypothesis.
+
+The score is not an identity declaration or proof of guilt.
+
+6. Explainable Analysis
+
+The system provides supporting factors behind the generated score so that analysts can understand why evidence contributes to an attribution hypothesis.
+
+7. Stress Testing
+
+Analysts can examine how the attribution-support result changes when evidence or relationships are removed or challenged.
+
+This helps identify dependencies, contradictions and alternative explanations.
+
+8. Human-in-the-Loop Review
+
+The analyst remains responsible for reviewing evidence and deciding whether the available information is sufficient for further investigation.
+
+9. Evidence & Audit Trail
+
+Investigation outputs can be exported for further analysis and documentation, with integrity-oriented hashing/audit mechanisms included in the workflow.
+
+10. Report & Export
+
+The prototype supports investigation report generation and structured exports for further use.
+
+Supported export formats include:
+
+- PDF
+- CSV
+- JSON
+
+---
+
+Investigation Workflow
+
+Seed
+  ↓
+Discover
+  ↓
+Extract & Correlate
+  ↓
+Graph & Fuse
+  ↓
+Score & Explain
+  ↓
+Stress-Test + Analyst Review
+  ↓
+Investigate
+  ↓
+Lead & Audit
+
+---
+
+Technology Stack
+
+Layer| Technology
+Frontend| HTML, CSS, JavaScript
+Visualization| Cytoscape.js, Chart.js
+Backend| Java, Spring Boot
+Database| MySQL
+API| REST APIs
+Build| Maven
+Version Control| Git / GitHub
+Reporting| PDF / structured export generation
+
+Additional AI/ML and advanced intelligence capabilities are planned for future development beyond the current controlled prototype.
+
+---
+
+Prototype Scope
+
+The current prototype demonstrates the complete investigation flow using controlled data:
+
+1. Create investigation case
+2. Add known indicator
+3. Perform controlled analysis
+4. Extract entities
+5. Identify relationships
+6. Collect evidence
+7. Visualise investigation graph
+8. Generate timeline
+9. Calculate attribution-support score
+10. Explain score
+11. Perform analyst review
+12. Stress-test the analysis
+13. Generate final investigation report
+14. Export PDF
+15. Export CSV
+16. Export JSON
+17. Maintain investigation/audit information
+
+---
+
+Project Structure
 
 DAVIS-PROTOTYPE/
-
-├── backend/
-│   └── Spring Boot backend and API
 │
-├── aiml/
-│   ├── entity_extraction/
-│   ├── similarity/
-│   ├── relationship_detection/
-│   └── api/
+├── backend/
+│   └── src/
+│       └── main/
+│           └── java/
+│               └── com/
+│                   └── davis/
 │
 ├── frontend/
 │   ├── index.html
@@ -76,322 +167,44 @@ DAVIS-PROTOTYPE/
 │   └── js/
 │
 ├── database/
-│   ├── schema.sql
-│   └── seed.sql
-│
-├── data/
-│   └── intelligence/
-│       └── synthetic_intelligence.json
-│
-├── docs/
-│   ├── PROJECT_RULES.md
-│   └── API_CONTRACT.md
+│   └── init.sql
 │
 ├── README.md
-└── .gitignore
+├── RUNNING.md
+└── pom.xml
+
+«The exact directory structure may vary with the current repository version.»
 
 ---
 
-# TEAM RESPONSIBILITIES
+Important Disclaimer
 
-## Harshada — Backend + Database + Integration
+DAVIS is an investigation-support prototype.
 
-Responsible for:
+Its attribution-support score is intended to organise and explain available evidence. It should not be interpreted as an automated declaration of identity, guilt, or legal responsibility.
 
-- MySQL database
-- Spring Boot backend
-- API implementation
-- Data persistence
-- Composite investigation API
-- Final integration
-- Main branch
+The current demonstration uses synthetic/controlled data and is intended to demonstrate the technical workflow rather than conduct real-world investigations.
 
 ---
 
-## Frontend
+Future Scope
 
-Responsible for:
+Future versions can extend DAVIS with:
 
-- Investigation UI
-- Backend API integration
-- Entity/relationship display
-- Relationship graph
-- Evidence drill-down
-- Timeline
-- Confidence display
-- Analyst review UI
-- Stress-test UI
-- Report/export controls
-
----
-
-## AIML — Entity + Similarity
-
-Responsible for:
-
-- Entity extraction
-- Text similarity
-- Stylometric similarity
-- Behaviour/activity similarity
-- Normalized entity output
-- Similarity evidence
+- AI-aware stylometry
+- AI-generated/paraphrased text detection
+- Expanded dark/restricted-web intelligence integration
+- Advanced entity resolution
+- Behavioural correlation
+- Visual similarity analysis
+- Blockchain intelligence
+- Public-web expansion with OPSEC controls
+- Explainable AI enhancements
+- Court-oriented evidence packaging
+- Deployment in controlled government infrastructure
 
 ---
 
-## AIML — Relationship Detection
+Repository
 
-Responsible for:
-
-- Candidate relationship detection
-- Cross-marketplace correlation
-- Infrastructure relationship signals
-- Persona relationship signals
-- Supporting evidence
-- Normalized relationship output
-
----
-
-## Confidence + Stress Test
-
-Responsible for:
-
-- Explainable attribution-confidence score
-- Confidence factors
-- Evidence-based scoring
-- Remove-one-signal stress test
-- Baseline vs challenged score
-- Robustness indicator
-
----
-
-## Report + Export
-
-Responsible for:
-
-- Final investigation report
-- PDF export
-- CSV export
-- JSON export
-- Synthetic-data disclaimer
-- Final case summary
-
----
-
-# BEFORE CODING
-
-EVERY TEAM MEMBER MUST READ:
-
-1. docs/PROJECT_RULES.md
-2. docs/API_CONTRACT.md
-3. README.md
-
-Then read the files belonging to their assigned feature.
-
-API_CONTRACT.md is the authoritative integration reference.
-
----
-
-# SOURCE OF TRUTH
-
-The BACKEND is the single source of truth.
-
-Frontend must consume backend data.
-
-AIML must return normalized data.
-
-Confidence must use backend evidence.
-
-Reports and exports must use backend investigation data.
-
-Do not create a second source of truth through hard-coded frontend data.
-
----
-
-# AI/ML ROLE
-
-AI/ML supports the investigation by:
-
-- extracting entities
-- detecting similarities
-- suggesting relationships
-- generating supporting evidence
-
-AI/ML does NOT make the final attribution decision.
-
-The final assessment is produced from the normalized evidence by the
-confidence engine and remains subject to investigator review.
-
----
-
-# CORE DATA MODEL
-
-CASE
-→ INDICATOR
-→ ENTITY
-→ RELATIONSHIP
-→ EVIDENCE
-→ CONFIDENCE
-→ REVIEW
-→ STRESS TEST
-→ REPORT / EXPORT
-
-Graph and timeline are views of this same investigation data.
-
----
-
-# SUPPORTED PROTOTYPE AREAS
-
-## Infrastructure Correlation
-
-Examples:
-
-- onion service
-- domain
-- server
-- IP
-- SSL certificate
-- infrastructure reuse
-- clearnet correlation
-
-## Cross-Marketplace Correlation
-
-Examples:
-
-- usernames
-- aliases
-- emails
-- PGP keys
-- wallets
-- marketplaces
-
-## Persona / Behaviour Correlation
-
-Examples:
-
-- writing similarity
-- behavioural similarity
-- activity-pattern similarity
-
-All of these are represented through the same
-ENTITY → RELATIONSHIP → EVIDENCE model.
-
----
-
-# STRESS TEST
-
-The required prototype stress test is:
-
-REMOVE ONE SIGNAL
-
-The selected evidence is temporarily removed from the confidence
-calculation.
-
-Original stored evidence is NOT deleted or permanently modified.
-
-The system shows:
-
-- baseline score
-- challenged score
-- score change
-- assessment-level change
-- robustness indicator
-- explanation
-
----
-
-# FINAL DEMO
-
-The prototype should demonstrate:
-
-1. Create a case
-2. Enter a known indicator
-3. Run controlled intelligence analysis
-4. Extract entities
-5. Generate relationships
-6. Show evidence
-7. Open the relationship graph
-8. Show timeline
-9. Calculate attribution-confidence score
-10. Show score explanation
-11. Record analyst review
-12. Run stress test
-13. Reset stress test
-14. Generate final report
-15. Export PDF
-16. Export CSV
-17. Export JSON
-
-The UI must clearly identify the dataset as synthetic/controlled.
-
----
-
-# DEVELOPMENT RULES
-
-- Work only on your assigned branch.
-- Do not modify main directly.
-- Do not change API names or fields without approval.
-- Do not change the database structure without coordination.
-- Do not add unnecessary frameworks or features.
-- Do not hard-code final investigation results in the frontend.
-- Do not delete evidence during stress testing.
-- Do not claim AI proves identity.
-- Keep implementation suitable for a student prototype.
-
-If a change appears to require a contract change:
-
-STOP → INFORM THE INTEGRATION OWNER → AGREE ON THE CHANGE → UPDATE THE
-CONTRACT → THEN CODE.
-
----
-
-# GIT WORKFLOW
-
-Each feature is developed on its own branch.
-
-Examples:
-
-feature/frontend
-feature/aiml-entity
-feature/aiml-relationship
-feature/confidence
-feature/report-export
-
-Harshada owns:
-
-main
-
-Workflow:
-
-CREATE / SWITCH TO BRANCH
-→ CODE
-→ TEST
-→ COMMIT
-→ PUSH
-→ SEND BRANCH FOR INTEGRATION
-→ REVIEW
-→ MERGE INTO MAIN
-
----
-
-# IMPORTANT DOCUMENTS
-
-docs/PROJECT_RULES.md
-→ Rules and scope
-
-docs/API_CONTRACT.md
-→ Frozen API and integration contract
-
-README.md
-→ Project overview and development map
-
----
-
-# CURRENT PROTOTYPE LIMITATION
-
-The current implementation is intended to demonstrate the complete
-analytical workflow on controlled/synthetic intelligence.
-
-Live authorized intelligence connectors, large-scale graph infrastructure,
-advanced identity resolution, calibrated attribution models, extensive
-blockchain analytics, and continuous monitoring are outside the current
-prototype scope.
+This repository contains the prototype implementation, source code, database setup and documentation required to understand and run DAVIS locally.
