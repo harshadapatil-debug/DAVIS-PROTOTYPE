@@ -9,33 +9,108 @@
 </head>
 <body>
   <div class="app-shell">
+    <aside class="app-rail" aria-label="Application navigation">
+      <div class="brand-lockup">
+        <div class="brand-mark" aria-hidden="true">DV</div>
+        <div>
+          <div class="brand-name">DAVIS</div>
+          <div class="brand-subtitle">INVESTIGATION CONSOLE</div>
+        </div>
+      </div>
+
+      <div class="rail-group">
+        <div class="rail-label">WORKSPACE</div>
+        <button class="rail-item active" id="rail-cases" type="button">
+          <span class="rail-icon" aria-hidden="true">01</span>
+          <span>Cases</span>
+        </button>
+        <button class="rail-item" id="rail-new-case" type="button">
+          <span class="rail-icon" aria-hidden="true">+</span>
+          <span>New case</span>
+        </button>
+      </div>
+
+      <div class="rail-group case-nav-group" id="case-side-nav" hidden>
+        <div class="rail-label">ACTIVE CASE</div>
+        <button class="rail-item side-tab" type="button" data-tab="overview">
+          <span class="rail-icon" aria-hidden="true">01</span>
+          <span>Overview</span>
+        </button>
+        <button class="rail-item side-tab" type="button" data-tab="entities">
+          <span class="rail-icon" aria-hidden="true">02</span>
+          <span>Entities</span>
+        </button>
+        <button class="rail-item side-tab" type="button" data-tab="relationships">
+          <span class="rail-icon" aria-hidden="true">03</span>
+          <span>Graph</span>
+        </button>
+        <button class="rail-item side-tab" type="button" data-tab="evidence">
+          <span class="rail-icon" aria-hidden="true">04</span>
+          <span>Evidence</span>
+        </button>
+        <button class="rail-item side-tab" type="button" data-tab="assessment">
+          <span class="rail-icon" aria-hidden="true">05</span>
+          <span>Assessment</span>
+        </button>
+        <button class="rail-item side-tab" type="button" data-tab="review">
+          <span class="rail-icon" aria-hidden="true">06</span>
+          <span>Review</span>
+        </button>
+        <button class="rail-item side-tab" type="button" data-tab="report">
+          <span class="rail-icon" aria-hidden="true">07</span>
+          <span>Report</span>
+        </button>
+      </div>
+
+      <div class="rail-footer">
+        <div class="controlled-chip">
+          <span class="controlled-dot" aria-hidden="true"></span>
+          <div>
+            <strong>CONTROLLED DATASET</strong>
+            <span>Prototype environment</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
     <main class="main-content">
       <header class="topbar">
         <div class="topbar-left">
-          <div>
+          <div class="topbar-context">
             <div class="eyebrow">DIGITAL ATTRIBUTION &amp; VERIFICATION INTELLIGENCE SYSTEM</div>
-            <div class="page-title" id="page-title">Cases</div>
+            <div class="page-title" id="page-title">Case register</div>
           </div>
         </div>
-        <div class="connection" id="connection-status" aria-live="polite">
-          <span class="connection-dot" aria-hidden="true"></span>
-          <span class="connection-text">Checking API</span>
+        <div class="topbar-right">
+          <div class="environment-chip">CONTROLLED / SYNTHETIC</div>
+          <div class="connection" id="connection-status" aria-live="polite">
+            <span class="connection-dot" aria-hidden="true"></span>
+            <span class="connection-text">Checking API</span>
+          </div>
         </div>
       </header>
 
       <section class="view" id="home-view" aria-labelledby="cases-heading">
+        <div class="console-notice">
+          <span class="notice-mark" aria-hidden="true">i</span>
+          <div>
+            <strong>Investigator console</strong>
+            <span>DAVIS uses controlled/synthetic intelligence for prototype demonstration and produces an attribution-confidence assessment for investigator review.</span>
+          </div>
+        </div>
+
         <div class="view-header">
           <div>
             <div class="eyebrow">CASE REGISTER</div>
             <h1 id="cases-heading">Cases</h1>
             <p>Open an existing investigation or create a new case.</p>
           </div>
-          <button class="btn primary" id="create-case-open" type="button">Create case</button>
+          <button class="btn primary btn-lg" id="create-case-open" type="button"><span aria-hidden="true">+</span> Create case</button>
         </div>
 
-        <div class="inline-alert" id="home-alert" hidden></div>
+        <div class="inline-alert" id="home-alert" hidden aria-live="polite"></div>
 
-        <div class="table-wrap">
+        <div class="table-wrap case-table-wrap">
           <table class="data-table" aria-label="Cases">
             <thead>
               <tr>
@@ -57,7 +132,7 @@
       <section class="view" id="case-view" hidden>
         <div class="case-header">
           <div class="case-heading">
-            <button class="text-button" id="back-to-cases" type="button">← Cases</button>
+            <button class="text-button back-button" id="back-to-cases" type="button"><span aria-hidden="true">←</span> Cases</button>
             <div class="case-heading-main">
               <div class="eyebrow">ACTIVE INVESTIGATION</div>
               <h1 id="case-title">—</h1>
@@ -65,12 +140,12 @@
             </div>
           </div>
           <div class="case-actions">
-            <button class="btn secondary" id="add-indicator-open" type="button">Add indicator</button>
-            <button class="btn primary" id="run-investigation" type="button">Run investigation</button>
+            <button class="btn secondary btn-lg" id="add-indicator-open" type="button">Add indicator</button>
+            <button class="btn primary btn-lg" id="run-investigation" type="button">Run investigation</button>
           </div>
         </div>
 
-        <div class="inline-alert" id="case-alert" hidden></div>
+        <div class="inline-alert" id="case-alert" hidden aria-live="polite"></div>
         <div class="loading-bar" id="investigation-loading" hidden><span></span></div>
 
         <div class="case-overview-strip" id="case-overview-strip"></div>
@@ -118,6 +193,7 @@
         <div>
           <div class="eyebrow">NEW CASE</div>
           <h2>Create investigation case</h2>
+          <p>Register the case before adding its known starting indicator.</p>
         </div>
         <button class="icon-button" value="cancel" type="submit" aria-label="Close">×</button>
       </div>
@@ -157,6 +233,7 @@
         <div>
           <div class="eyebrow">KNOWN INDICATOR</div>
           <h2>Add investigation starting clue</h2>
+          <p>Use the indicator that anchors the controlled intelligence expansion.</p>
         </div>
         <button class="icon-button" value="cancel" type="submit" aria-label="Close">×</button>
       </div>

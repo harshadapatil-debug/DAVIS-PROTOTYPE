@@ -15,6 +15,7 @@
     report: null,
     activeTab: 'overview',
     selectedRelationshipId: null,
+    selectedEntityId: null,
     selectedEvidenceId: null,
     stressResult: null,
     caseLoadError: null,
@@ -71,8 +72,12 @@
   function setView(name) {
     const home = $('#home-view');
     const caseView = $('#case-view');
+    const caseNav = $('#case-side-nav');
+    const casesNav = $('#rail-cases');
     home.hidden = name !== 'home';
     caseView.hidden = name !== 'case';
+    if (caseNav) caseNav.hidden = name !== 'case';
+    if (casesNav) casesNav.classList.toggle('active', name === 'home');
     $('#page-title').textContent = name === 'home' ? 'Case register' : 'Case investigation';
   }
 
@@ -178,6 +183,7 @@
     state.confidence = null;
     state.report = null;
     state.selectedRelationshipId = null;
+    state.selectedEntityId = null;
     state.selectedEvidenceId = null;
     state.stressResult = null;
     state.caseLoadError = null;
@@ -260,6 +266,7 @@
   function setActiveTab(tab) {
     state.activeTab = tab;
     $$('.tab', $('#case-tabs')).forEach(button => button.classList.toggle('active', button.dataset.tab === tab));
+    $$('.side-tab', $('#case-side-nav')).forEach(button => button.classList.toggle('active', button.dataset.tab === tab));
     $$('.tab-panel', $('#case-view')).forEach(panel => panel.classList.toggle('active', panel.dataset.panel === tab));
   }
 
@@ -299,7 +306,22 @@
         </div>`
       : '<div class="section-block"><div class="empty-state compact"><strong>No timeline events.</strong><span>The backend returned no evidence observations.</span></div></div>';
 
-    $('#overview-content').innerHTML = `<div class="overview-grid">
+    const confidence = i.confidence || state.confidence || null;
+    const resultBanner = state.investigationAvailable
+      ? `<div class="result-banner">
+          <div class="result-banner-main">
+            <div class="section-kicker">INVESTIGATION RESULT</div>
+            <h2>Controlled intelligence analysis processed</h2>
+            <p>DAVIS expanded the known indicator into backend entities, relationships, evidence and an attribution-confidence assessment.</p>
+          </div>
+          <div class="result-banner-metrics">
+            <div><span>Assessment</span><strong>${escapeHtml(confidence?.riskLevel || '—')}</strong></div>
+            <div><span>Confidence</span><strong>${escapeHtml(confidence?.score ?? '—')}</strong></div>
+          </div>
+        </div>`
+      : '';
+
+    $('#overview-content').innerHTML = `${resultBanner}<div class="overview-grid">
       <div class="primary-panel">
         <div class="section-heading"><div><div class="section-kicker">CASE INFORMATION</div><h2>Case details</h2></div></div>
         <div class="kv-grid">
@@ -362,6 +384,27 @@
     state.selectedRelationshipId = String(id);
     renderRelationshipDetail();
     $$('.relationship-row').forEach(row => row.classList.toggle('selected', row.dataset.relationshipId === state.selectedRelationshipId));
+    const graph = $('#relationship-graph');
+    if (graph) {
+      $$('.edge-group', graph).forEach(edge => edge.classList.toggle('selected', edge.dataset.edgeId === state.selectedRelationshipId));
+    }
+  }
+
+  function selectGraphNode(id) {
+    state.selectedEntityId = String(id);
+    const entity = state.entities.find(item => String(item.entityId) === state.selectedEntityId);
+    const detail = $('#graph-selection');
+    if (!detail) return;
+    if (!entity) {
+      detail.innerHTML = '<div class="empty-state compact"><strong>Entity not found</strong><span>The selected graph node is not present in the current entity response.</span></div>';
+      return;
+    }
+    detail.innerHTML = `<div class="detail-card">
+      <div class="selection-title">SELECTED ENTITY · #${escapeHtml(entity.entityId)}</div>
+      <div class="selection-value monospace">${escapeHtml(entity.entityValue)}</div>
+      <div class="selection-meta">${escapeHtml(entity.entityType)} · Discovery confidence ${escapeHtml(entity.discoveryConfidence ?? '—')}</div>
+      <div class="detail-description">${escapeHtml(entity.description || 'No description returned by the backend.')}</div>
+    </div>`;
   }
 
   function renderRelationships() {
@@ -400,7 +443,7 @@
     }
 
     const graph = state.investigation?.graph || { nodes: [], edges: [] };
-    DavisGraph.render($('#relationship-graph'), graph, state.knownIndicator, selectRelationship);
+    DavisGraph.render($('#relationship-graph'), graph, state.knownIndicator, selectRelationship, selectGraphNode);
     if (state.selectedRelationshipId == null && state.relationships.length) selectRelationship(state.relationships[0].relationshipId);
     else renderRelationshipDetail();
   }
@@ -752,6 +795,12 @@
 
   function wireEvents() {
     $('#create-case-open').addEventListener('click', openCaseModal);
+    $('#rail-new-case').addEventListener('click', openCaseModal);
+    $('#rail-cases').addEventListener('click', async () => {
+      updateUrl(null);
+      setView('home');
+      await loadCases();
+    });
     $('#add-indicator-open').addEventListener('click', openIndicatorModal);
     $('#run-investigation').addEventListener('click', runInvestigation);
     $('#back-to-cases').addEventListener('click', async () => {
@@ -766,7 +815,7 @@
       const openButton = event.target.closest('[data-open-case]');
       if (openButton) openCase(openButton.dataset.openCase);
       const tab = event.target.closest('[data-tab]');
-      if (tab && tab.classList.contains('tab')) setActiveTab(tab.dataset.tab);
+      if (tab && (tab.classList.contains('tab') || tab.classList.contains('side-tab'))) setActiveTab(tab.dataset.tab);
     });
   }
 

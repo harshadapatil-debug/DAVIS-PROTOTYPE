@@ -25,7 +25,7 @@
     });
   }
 
-  function render(container, graph, knownIndicator, onEdgeSelect) {
+  function render(container, graph, knownIndicator, onEdgeSelect, onNodeSelect) {
     const nodes = Array.isArray(graph?.nodes) ? graph.nodes : [];
     const edges = Array.isArray(graph?.edges) ? graph.edges : [];
 
@@ -47,6 +47,7 @@
       const assessment = String(edge.assessment || '').toUpperCase();
       const classes = `graph-edge ${assessment === 'OBSERVED' ? 'observed' : assessment === 'INFERRED' ? 'inferred' : ''}`;
       return `<g class="edge-group" data-edge-id="${escapeHtml(edge.id ?? edge.relationshipId)}" tabindex="0" role="button" aria-label="${escapeHtml(edge.relationshipType || 'Relationship')}">
+        <line class="graph-edge-hit" x1="${source.x}" y1="${source.y}" x2="${target.x}" y2="${target.y}"></line>
         <line class="${classes}" x1="${source.x}" y1="${source.y}" x2="${target.x}" y2="${target.y}"></line>
         <title>${escapeHtml(edge.relationshipType || '')} · ${escapeHtml(assessment)}</title>
         <text class="edge-label" x="${(source.x + target.x) / 2}" y="${(source.y + target.y) / 2 - 6}" text-anchor="middle">${escapeHtml(compactLabel(edge.relationshipType, 17))}</text>
@@ -56,7 +57,8 @@
     const nodeSvg = positioned.map((node) => {
       const isKnown = knownValue && String(node.label ?? '') === knownValue;
       const entityId = node.entityId ?? node.id;
-      return `<g class="graph-node ${isKnown ? 'known-node' : ''}" data-node-id="${escapeHtml(entityId)}">
+      return `<g class="graph-node ${isKnown ? 'known-node' : ''}" data-node-id="${escapeHtml(entityId)}" tabindex="0" role="button" aria-label="${escapeHtml(node.label || node.entityType || 'Entity')}">
+        <circle class="node-hit" cx="${node.x}" cy="${node.y}" r="39"></circle>
         <circle cx="${node.x}" cy="${node.y}" r="28"></circle>
         <circle class="node-ring" cx="${node.x}" cy="${node.y}" r="28"></circle>
         <text class="node-type" x="${node.x}" y="${node.y - 42}" text-anchor="middle">${escapeHtml(compactLabel(node.entityType, 14))}</text>
@@ -79,11 +81,26 @@
           ${nodeSvg}
         </svg>
       </div>
+      <div id="graph-selection" class="graph-selection"><div class="empty-state compact"><strong>Interactive graph</strong><span>Select a node to inspect the entity, or select a relationship line to inspect its linked evidence.</span></div></div>
       ${edges.length ? '<div class="graph-hint">Select a relationship line to inspect its description and linked evidence.</div>' : '<div class="graph-hint">No relationship edges returned by the backend.</div>'}
     </div>`;
 
     container.querySelectorAll('.edge-group').forEach((element) => {
-      const activate = () => onEdgeSelect?.(String(element.dataset.edgeId));
+      const activate = () => {
+        container.querySelectorAll('.edge-group').forEach(item => item.classList.toggle('selected', item === element));
+        onEdgeSelect?.(String(element.dataset.edgeId));
+      };
+      element.addEventListener('click', activate);
+      element.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); activate(); }
+      });
+    });
+
+    container.querySelectorAll('.graph-node').forEach((element) => {
+      const activate = () => {
+        container.querySelectorAll('.graph-node').forEach(item => item.classList.toggle('selected', item === element));
+        onNodeSelect?.(String(element.dataset.nodeId));
+      };
       element.addEventListener('click', activate);
       element.addEventListener('keydown', (event) => {
         if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); activate(); }

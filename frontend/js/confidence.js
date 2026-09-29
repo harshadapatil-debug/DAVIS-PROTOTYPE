@@ -30,22 +30,23 @@
     const score = Number.isFinite(rawScore) ? rawScore : null;
     const factors = parseFactors(confidence.factorsJson);
 
+    const riskClass = String(confidence.riskLevel || '').toLowerCase().replace(/[^a-z0-9_-]/g, '');
     const factorsRows = factors.map((factor) => `<tr>
       <td>#${escapeHtml(factor.evidenceId)}</td>
       <td>${escapeHtml(factor.type)}</td>
       <td>${escapeHtml(factor.weight)}</td>
       <td>${escapeHtml(factor.strength)}</td>
       <td>${escapeHtml(factor.reliability)}</td>
-      <td>${escapeHtml(factor.direction)}</td>
+      <td><span class="direction-pill ${String(factor.direction || '').toLowerCase()}">${escapeHtml(factor.direction)}</span></td>
     </tr>`).join('');
 
     return `<div class="assessment-grid">
       <div class="score-panel">
         <div class="eyebrow">CONFIDENCE SCORE</div>
         <div class="score-number">${score === null ? '—' : escapeHtml(score.toFixed(2))}</div>
-        <div class="score-track" aria-hidden="true"><span style="width:${score === null ? 0 : Math.max(0, Math.min(100, score))}%"></span></div>
+        <div class="score-track" role="img" aria-label="Confidence score ${score === null ? 'not available' : score.toFixed(2) + ' out of 100'}"><span style="width:${score === null ? 0 : Math.max(0, Math.min(100, score))}%"></span></div>
         <div class="score-scale"><span>0</span><span>100</span></div>
-        <div class="score-label-row"><span>Risk level</span><strong>${escapeHtml(confidence.riskLevel || '—')}</strong></div>
+        <div class="score-label-row"><span>Risk level</span><strong class="risk-value ${riskClass}">${escapeHtml(confidence.riskLevel || '—')}</strong></div>
         <div class="score-label-row"><span>Calculated</span><strong>${escapeHtml(confidence.calculatedAt || '—')}</strong></div>
       </div>
 
